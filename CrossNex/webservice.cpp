@@ -1,31 +1,36 @@
 #include "webservice.h"
 
-WebService::WebService(QObject *parent)
-    : QObject{parent}
+WebService::WebService(QObject *parent) : QObject(parent), manager(new QNetworkAccessManager(this))
 {
-    networkManager = new QNetworkAccessManager(this);
-    connect(networkManager, &QNetworkAccessManager::finished,
-            this, &WebService::OnReplyFinished);
+    connect(manager, &QNetworkAccessManager::finished, this, &WebService::HandleNetworkReply);
 }
 
-void WebService::FetchDataFromApi(const QUrl &url)
+WebService::~WebService()
+{
+    if (manager != nullptr)
+    {
+        delete manager;
+        manager = nullptr;
+    }
+}
+
+void WebService::FetchData(const QUrl &url, int controlIdentifier)
 {
     QNetworkRequest request(url);
-    networkManager->get(request);
+    QNetworkReply *reply = manager->get(request);
+
+    reply->setProperty("controlIdentifier", QVariant::fromValue(controlIdentifier));
 }
 
-void WebService::OnReplyFinished(QNetworkReply *reply)
+void WebService::HandleNetworkReply(QNetworkReply *reply)
 {
-    if (reply->error() == QNetworkReply::NoError)
-    {
-        QByteArray data = reply->readAll();
-        emit RequestFinished(data);
-    }
-    else
-    {
-        qDebug() << "Error: " << reply->errorString();
+    int controlIdentifier = reply->property("controlIdentifier").toInt();
+
+    if (reply->error() == QNetworkReply::NoError) {
+        emit dataFetched(reply->readAll(), controlIdentifier);
+    } else {
+        emit errorOccurred(reply->errorString(), controlIdentifier);
     }
 
     reply->deleteLater();
 }
-

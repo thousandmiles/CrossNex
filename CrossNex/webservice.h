@@ -4,24 +4,38 @@
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QUrl>
 
-class WebService : public QObject
-{
+enum URL_ID {
+    ID_CPU_Info,
+    ID_CPU_Time,
+    ID_Process_Time_pid,
+    ID_Disk_List,
+    ID_Process_Memory_pid,
+    ID_Machine_Memory,
+    ID_Process_Info
+};
+
+class WebService : public QObject {
     Q_OBJECT
+
 public:
-    explicit WebService(QObject *parent = nullptr);
 
-public slots:
-    void FetchDataFromApi(const QUrl &url);
+    Q_ENUM(URL_ID);
+    WebService(QObject *parent = nullptr);
+    ~WebService();
 
-private slots:
-    void OnReplyFinished(QNetworkReply *reply);
+    void FetchData(const QUrl &url, int controlIdentifier);
 
 signals:
-    void RequestFinished(const QByteArray &data);
+    void dataFetched(const QByteArray &data, int controlIdentifier);
+    void errorOccurred(const QString &error, int controlIdentifier);
+
+private slots:
+    void HandleNetworkReply(QNetworkReply *reply);
 
 private:
-    QNetworkAccessManager *networkManager;
+    QNetworkAccessManager *manager;
 };
 
 #endif // WEBSERVICE_H
