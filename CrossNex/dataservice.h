@@ -2,40 +2,37 @@
 #define DATASERVICE_H
 
 #include <QObject>
-#include <QThread>
-#include <QTimer>
 #include "webservice.h"
 
 class DataService : public QObject
 {
     Q_OBJECT
+
 public:
-    explicit DataService(QObject *parent = nullptr);
+    DataService(QObject *parent = nullptr);
     ~DataService();
 
-public slots:
-    void StartService();
-    void StopService();
-    void GetNext();
-
+    void FetchDataForControl1();
+    void FetchDataForControl2();
+    void FetchData(int controlIdentifier, int pid = -1);
 
 signals:
-    void ApiDataReceived(const QByteArray &data);
+    void control_1_DataReady(const QByteArray &data);
+    void control_2_DataReady(const QByteArray &data);
+    void control_3_DataReady(const QByteArray &data);
+    void errorOccurred(const QString &error);
+
+private slots:
+    void HandleWebServiceData(const QByteArray &data, int controlIdentifier);
+    void HandleWebServiceError(const QString &error, int controlIdentifier);
 
 private:
-    QTimer *m_timer;
-    WebService *m_apiRequester;
-    bool m_isRunning;
-    bool Get;
-    unsigned int m_urlIndex;
-    static const QStringList m_urlList;
-
     QString IP = "192.168.136.128";
     QString PORT = "8888";
     QString URLPATH = "http://" + IP + ":" + PORT + "/";
 
-    void FetchDataFromApi();
-    void SetUrlList();
+private:
+    WebService *webService;
 };
 
 #endif // DATASERVICE_H

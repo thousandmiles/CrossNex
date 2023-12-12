@@ -1,73 +1,113 @@
 #include "dataservice.h"
 #include "webservice.h"
 
-DataService::DataService(QObject *parent):
-    QObject{parent},
-    m_isRunning{false},
-    m_urlIndex{0}
+DataService::DataService(QObject *parent) : QObject(parent), webService(new WebService(this))
 {
-    m_apiRequester = new WebService();
-    m_timer = new QTimer(this);
-    connect(m_timer, &QTimer::timeout, this, &DataService::FetchDataFromApi);
-    connect(m_apiRequester, &WebService::RequestFinished, this, &DataService::GetNext);
+    connect(webService, &WebService::dataFetched, this, &DataService::HandleWebServiceData);
+    connect(webService, &WebService::errorOccurred, this, &DataService::HandleWebServiceError);
 }
-
-const QStringList DataService::m_urlList =
-{
-    "cpu-info",
-    "cpu-total-time",
-    //"process-total-time/pid",
-    "disk-info",
-    //"process-memory/pid",
-    "machine-memory",
-    "process-info"
-};
 
 DataService::~DataService()
 {
-    m_apiRequester->deleteLater();
-    StopService();
-}
-
-void DataService::StartService()
-{
-    if (!m_isRunning)
+    if (webService != nullptr)
     {
-        m_timer->start(5000);
-        m_isRunning = true;
+        delete webService;
+        webService = nullptr;
     }
 }
 
-void DataService::StopService()
+void DataService::FetchData(int controlIdentifier, int pid)
 {
-    if (m_isRunning)
-    {
-        m_timer->stop();
-        m_isRunning = false;
-    }
-}
+    QString url = URLPATH;
 
-void DataService::GetNext()
-{
-    m_urlIndex++;
-    if (m_urlIndex >= m_urlList.size())
+    switch (controlIdentifier) {
+    case ID_CPU_Info:
     {
-        m_urlIndex = 0;
+        url += "cpu-info";
+        break;
+    }
+    case ID_CPU_Time:
+    {
+        url += "cpu-total-time";
+        break;
+    }
+    case ID_Process_Time_pid:
+    {
+        if (pid == -1)
+        {
+            return;
+        }
+        url += "process-total-time/%1";
+        url = url.arg(pid);
+        break;
+    }
+    case ID_Disk_List:
+    {
+        url += "disk-info";
+        break;
+    }
+    case ID_Process_Memory_pid:
+    {
+        if (pid == -1)
+        {
+            return;
+        }
+        url += "process-memory/%1";
+        url = url.arg(pid);
+        break;
+    }
+    case ID_Machine_Memory:
+    {
+        url += "machine-memory";
+        break;
+    }
+    case ID_Process_Info:
+    {
+        url += "process-info";
+        break;
+    }
+    default:
+        qDebug() << "Unknown ID";
         return;
     }
+
+    QUrl apipath(url);
+    qDebug()<<url;
+    webService->FetchData(apipath, controlIdentifier);
 }
 
-void DataService::FetchDataFromApi()
+void DataService::HandleWebServiceData(const QByteArray &data, int controlIdentifier)
 {
-    // QUrl apiUrl("http://192.168.136.128:8888/cpu-info");
-    // m_apiRequester->FetchDataFromApi(apiUrl);
+    switch (controlIdentifier) {
+    case ID_CPU_Info:
+        emit control_1_DataReady(data);
+        break;
+    case ID_CPU_Time:
+        emit control_2_DataReady(data);
+        break;
+    case ID_Process_Time_pid:
+        emit control_3_DataReady(data);
+        break;
+    case ID_Disk_List:
+        emit control_3_DataReady(data);
+        break;
+    case ID_Process_Memory_pid:
+        emit control_3_DataReady(data);
+        break;
+    case ID_Machine_Memory:
+        emit control_3_DataReady(data);
+        break;
+    case ID_Process_Info:
+        emit control_3_DataReady(data);
+        break;
+    default:
+        qDebug() << "Unknown ID";
+        break;
+    }
 
-    QUrl apiUrl = URLPATH + m_urlList[m_urlIndex];
-    m_apiRequester->FetchDataFromApi(apiUrl);
-
-    qDebug()<<"---"<<apiUrl.toString();
-    m_timer->start(5000);
 }
 
-
-
+void DataService::HandleWebServiceError(const QString &error, int controlIdentifier)
+{
+    emit errorOccurred(error);
+}
