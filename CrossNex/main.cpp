@@ -1,5 +1,5 @@
 #include "mainwindow.h"
-#include "dataservice.h"
+#include "testcontrol.h"
 
 #include <QApplication>
 
@@ -7,9 +7,8 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     MainWindow w;
-    //w.show();
-    DataService *data = new DataService();
-    data->StartService();
+    w.show();
+    TestControl ct;
 
     return a.exec();
 }
