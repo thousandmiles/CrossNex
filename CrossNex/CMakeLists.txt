@@ -25,7 +25,7 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(CrossNex
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        mainwindow.h mainwindow.cpp mainwindow.ui
+
         dataservice.h dataservice.cpp
         webservice.h webservice.cpp
         testcontrol.h testcontrol.cpp
