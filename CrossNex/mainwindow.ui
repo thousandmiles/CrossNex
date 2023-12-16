@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1416</width>
+    <height>879</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QTreeWidget" name="treeWidget">
+       <column>
+        <property name="text">
+         <string notr="true">Host</string>
+        </property>
+       </column>
+       <item>
+        <property name="text">
+         <string>2</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>3</string>
+        </property>
+        <item>
+         <property name="text">
+          <string>新建子项目</string>
+         </property>
+         <item>
+          <property name="text">
+           <string>新建子项目</string>
+          </property>
+          <item>
+           <property name="text">
+            <string>新建子项目</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>新建子项目</string>
+            </property>
+           </item>
+          </item>
+         </item>
+        </item>
+       </item>
+      </widget>
+      <widget class="QFrame" name="mainframe">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1416</width>
+     <height>18</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>黑体</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <widget class="QMenu" name="menuSpaceHolder1">
+    <property name="font">
+     <font>
+      <pointsize>1</pointsize>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="title">
+     <string>文件</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuSpaceHolder2">
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="title">
+     <string>工具</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuSpaceHolder3">
+    <property name="font">
+     <font>
+      <pointsize>10</pointsize>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="title">
+     <string>帮助</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>视图</string>
+    </property>
+   </widget>
+   <addaction name="menuSpaceHolder1"/>
+   <addaction name="menuSpaceHolder2"/>
+   <addaction name="menuSpaceHolder3"/>
+   <addaction name="menu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
