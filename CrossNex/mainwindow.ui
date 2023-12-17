@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1416</width>
-    <height>879</height>
+    <width>575</width>
+    <height>375</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -26,43 +26,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QTreeWidget" name="treeWidget">
-       <column>
-        <property name="text">
-         <string notr="true">Host</string>
-        </property>
-       </column>
-       <item>
-        <property name="text">
-         <string>2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>3</string>
-        </property>
-        <item>
-         <property name="text">
-          <string>新建子项目</string>
-         </property>
-         <item>
-          <property name="text">
-           <string>新建子项目</string>
-          </property>
-          <item>
-           <property name="text">
-            <string>新建子项目</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>新建子项目</string>
-            </property>
-           </item>
-          </item>
-         </item>
-        </item>
-       </item>
-      </widget>
+      <widget class="NavigationTree" name="treeWidget"/>
       <widget class="QFrame" name="mainframe">
        <property name="frameShape">
         <enum>QFrame::Box</enum>
@@ -80,8 +44,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1416</width>
-     <height>18</height>
+     <width>575</width>
+     <height>13</height>
     </rect>
    </property>
    <property name="font">
@@ -93,6 +57,7 @@
    <widget class="QMenu" name="menuSpaceHolder1">
     <property name="font">
      <font>
+      <family>黑体</family>
       <pointsize>1</pointsize>
       <bold>false</bold>
      </font>
@@ -104,6 +69,7 @@
    <widget class="QMenu" name="menuSpaceHolder2">
     <property name="font">
      <font>
+      <family>黑体</family>
       <pointsize>10</pointsize>
       <bold>false</bold>
      </font>
@@ -115,6 +81,7 @@
    <widget class="QMenu" name="menuSpaceHolder3">
     <property name="font">
      <font>
+      <family>黑体</family>
       <pointsize>10</pointsize>
       <bold>false</bold>
      </font>
@@ -135,6 +102,13 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>NavigationTree</class>
+   <extends>QTreeWidget</extends>
+   <header location="global">navigationtree.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

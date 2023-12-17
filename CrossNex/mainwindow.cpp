@@ -9,6 +9,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     ui->setupUi(this);
+
+    this->resize(1200,900);
     this->setStyleSheet("background-color: #E0E0E0;");
 
     ui->menubar->setStyleSheet("QMenuBar {background-color: #E0E0E0;}"
