@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/icon/plus">
+        <file>resource/delete_folder.png</file>
+        <file>resource/delete_instance.png</file>
+        <file>resource/new.png</file>
+        <file>resource/new_folder.png</file>
+        <file>resource/new_instance.png</file>
+        <file>resource/rename_folder.png</file>
+        <file>resource/rename_instance.png</file>
+        <file>resource/folder.png</file>
+    </qresource>
+</RCC>
