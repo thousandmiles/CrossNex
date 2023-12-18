@@ -8,5 +8,9 @@
         <file>resource/rename_folder.png</file>
         <file>resource/rename_instance.png</file>
         <file>resource/folder.png</file>
+        <file>resource/home.png</file>
+        <file>resource/instance.png</file>
+        <file>resource/remote_desktop.png</file>
+        <file>resource/rename.png</file>
     </qresource>
 </RCC>
