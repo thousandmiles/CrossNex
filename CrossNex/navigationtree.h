@@ -13,9 +13,10 @@ constexpr const char* delete_instance = ":/icon/plus/resource/delete_instance.pn
 constexpr const char* new_root = ":/icon/plus/resource/new.png";
 constexpr const char* new_folder = ":/icon/plus/resource/new_folder.png";
 constexpr const char* new_instance = ":/icon/plus/resource/new_instance.png";
-constexpr const char* rename_folder = ":/icon/plus/resource/rename_folder.png";
-constexpr const char* rename_instance = ":/icon/plus/resource/rename_instance.png";
+constexpr const char* rename_folder = ":/icon/plus/resource/rename.png";
+constexpr const char* rename_instance = ":/icon/plus/resource/rename.png";
 constexpr const char* folder = ":/icon/plus/resource/folder.png";
+constexpr const char* instance = ":/icon/plus/resource/instance.png";
 
 class NavigationTree : public QTreeWidget
 {
@@ -23,9 +24,11 @@ class NavigationTree : public QTreeWidget
 public:
     NavigationTree(QWidget *parent = nullptr);
     void dropEvent(QDropEvent *event) override;
+
 private slots:
     void showContextMenu(const QPoint &pos);
     void createFolder();
+    void createInstance();
 
 private:
     QScopedPointer<CustomTreeWidgetItem> rootNode;
@@ -33,7 +36,7 @@ private:
 
 private:
     void addFolder(const QString &folderName);
-
+    void addInstance(const QString &instanceName);
 
 };
 

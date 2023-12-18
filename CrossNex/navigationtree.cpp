@@ -1,5 +1,6 @@
 #include "navigationtree.h"
 #include "navigationtree.moc"
+#include "newinstancedialog.h"
 #include <QInputDialog>
 
 NavigationTree::NavigationTree(QWidget *parent):
@@ -18,8 +19,6 @@ NavigationTree::NavigationTree(QWidget *parent):
 
     rootNode->setText(0, "新建");
     rootNode->setExpanded(true);  // 设置根节点默认展开
-
-    // 添加一个图标，模拟加号形状
 
     rootNode->setIcon(0, QIcon(new_root));
 
@@ -43,52 +42,51 @@ void NavigationTree::showContextMenu(const QPoint &pos)
 
     if (!item) return;
 
+    QAction *addAction = nullptr;
+    QAction *deleteAction = nullptr;
+    QAction *renamFolderAction = nullptr;
+    QAction *addFolderAction = nullptr;
+    QAction *deleteFolderAction = nullptr;
+    QAction *renameNodeAction = nullptr;
+
     if (item == rootNode.data())
     {
-        QAction *addAction = nullptr;
-        QAction *addFolderAction = nullptr;
 
         addAction = contextMenu.addAction(QIcon(new_instance), "新建实例");
         addFolderAction = contextMenu.addAction(QIcon(new_folder), "新建文件夹");
 
         connect(addFolderAction, &QAction::triggered, this, &NavigationTree::createFolder);
+        connect(addAction, &QAction::triggered, this, &NavigationTree::createInstance);
+
         QPoint pos = QCursor::pos();
-        QAction *selectedAction = contextMenu.exec(pos);
-
-        if (selectedAction == addAction)
-        {
-
-        }
-        else
-        {
-
-        }
+        contextMenu.exec(pos);
 
     }
     else
     {
-
-        QAction *addAction = contextMenu.addAction(QIcon(new_instance), "新建实例");
-        QAction *deleteAction = contextMenu.addAction(QIcon(delete_instance), "删除实例");
-        QAction *renamFolderAction = nullptr;
-        QAction *addFolderAction = nullptr;
-        QAction *deleteFolderAction = nullptr;
-        QAction *renameNodeAction = nullptr;
-
         contextMenu.addSeparator();
-        if (item->type() == CustomTreeWidgetItem::FolderType) {
+        if (item->type() == CustomTreeWidgetItem::FolderType)
+        {
+            addAction = contextMenu.addAction(QIcon(new_instance), "新建实例");
+            deleteAction = contextMenu.addAction(QIcon(delete_instance), "删除实例");
             renamFolderAction = contextMenu.addAction(QIcon(rename_folder), "重命名文件夹");
             addFolderAction = contextMenu.addAction(QIcon(new_folder), "新建文件夹");
             deleteFolderAction = contextMenu.addAction(QIcon(delete_folder), "删除文件夹");
-        } else {
-            renameNodeAction = contextMenu.addAction(QIcon(rename_instance), "重命名实例");
         }
+        else
+        {
+            renameNodeAction = contextMenu.addAction(QIcon(rename_instance), "重命名实例");
+            deleteAction = contextMenu.addAction(QIcon(delete_instance), "删除实例");
+        }
+
+        connect(addFolderAction, &QAction::triggered, this, &NavigationTree::createFolder);
+        connect(addAction, &QAction::triggered, this, &NavigationTree::createInstance);
 
         QAction *selectedAction = contextMenu.exec(mapToGlobal(pos));
 
         if (selectedAction == addAction)
         {
-
+            // do something ?
         }
         else if (selectedAction == deleteAction)
         {
@@ -118,10 +116,26 @@ void NavigationTree::createFolder()
     bool ok;
     QString folderName = QInputDialog::getText(this, "新建文件夹", "文件夹名称:", QLineEdit::Normal, "", &ok);
 
-        if (ok && !folderName.isEmpty()) {
-            // 添加新的文件夹节点
-            addFolder(folderName);
-        }
+    if (ok && !folderName.isEmpty()) {
+        addFolder(folderName);
+    }
+}
+
+void NavigationTree::createInstance()
+{
+    NewInstanceDialog newInstanceDlg;
+    if (newInstanceDlg.exec() == QDialog::Accepted)
+    {
+        // 用户点击了OK按钮
+        QString ipAddress = newInstanceDlg.getIpAddress();
+        QString instanceName = newInstanceDlg.getInstanceName();
+
+        // 在这里可以使用获取到的IP地址和实例名进行后续处理
+        qDebug() << "IP Address: " << ipAddress;
+        qDebug() << "Instance Name: " << instanceName;
+
+        addInstance(instanceName);
+    }
 }
 
 void NavigationTree::addFolder(const QString &folderName)
@@ -129,6 +143,13 @@ void NavigationTree::addFolder(const QString &folderName)
     CustomTreeWidgetItem *folderItem = new CustomTreeWidgetItem(this, CustomTreeWidgetItem::FolderType);
     folderItem->setText(0, folderName);
     folderItem->setIcon(0, QIcon(folder));
+}
+
+void NavigationTree::addInstance(const QString &instanceName)
+{
+    CustomTreeWidgetItem *instanceItem = new CustomTreeWidgetItem(this, CustomTreeWidgetItem::NodeType);
+    instanceItem->setText(0, instanceName);
+    instanceItem->setIcon(0, QIcon(instance));
 }
 
 
