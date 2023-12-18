@@ -17,6 +17,20 @@ find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick)
 
 set(PROJECT_SOURCES
         main.cpp
+        dataservice.h
+        dataservice.cpp
+        webservice.h
+        webservice.cpp
+        testcontrol.h
+        testcontrol.cpp
+        mainwindow.h
+        mainwindow.cpp
+        navigationtree.h
+        navigationtree.cpp
+        customtreewidgetitem.h
+        customtreewidgetitem.cpp
+        newinstancedialog.h
+        newinstancedialog.cpp
 
 )
 
@@ -24,13 +38,9 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(CrossNex
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-        dataservice.h dataservice.cpp
-        webservice.h webservice.cpp
-        testcontrol.h testcontrol.cpp
-        mainwindow.h mainwindow.cpp
-        navigationtree.h navigationtree.cpp
-        customtreewidgetitem.h customtreewidgetitem.cpp
+
         mainwindow.ui
+        images.qrc
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET CrossNex APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -62,11 +72,9 @@ target_link_libraries(CrossNex PUBLIC
 
 qt_add_qml_module(CrossNex
     URI Charts
-    QML_FILES framework.qml
     NO_RESOURCE_TARGET_PATH
     DEPENDENCIES QtQuick
-    RESOURCES
-    RESOURCES images.qrc
+    SOURCES
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
