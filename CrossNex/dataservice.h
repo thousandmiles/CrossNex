@@ -16,6 +16,11 @@ public:
     void FetchDataForControl2();
     void FetchData(int controlIdentifier, int pid = -1);
 
+    QString getIP() const;
+    void setIP(const QString &ip);
+
+    QString getURLPATH() const;
+
 signals:
     void control_1_DataReady(const QByteArray &data);
     void control_2_DataReady(const QByteArray &data);
@@ -27,9 +32,9 @@ private slots:
     void HandleWebServiceError(const QString &error, int controlIdentifier);
 
 private:
-    QString IP = "192.168.136.128";
-    QString PORT = "8888";
-    QString URLPATH = "http://" + IP + ":" + PORT + "/";
+    QString IP;
+    QString PORT;
+    QString URLPATH;
 
 private:
     WebService *webService;

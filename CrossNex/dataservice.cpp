@@ -1,8 +1,12 @@
 #include "dataservice.h"
 #include "webservice.h"
+#include <QMessageBox>
 
 DataService::DataService(QObject *parent) : QObject(parent), webService(new WebService(this))
 {
+    IP = "";
+    PORT = "8888";
+    URLPATH = "";
     connect(webService, &WebService::dataFetched, this, &DataService::HandleWebServiceData);
     connect(webService, &WebService::errorOccurred, this, &DataService::HandleWebServiceError);
 }
@@ -74,6 +78,30 @@ void DataService::FetchData(int controlIdentifier, int pid)
     QUrl apipath(url);
     qDebug()<<url;
     webService->FetchData(apipath, controlIdentifier);
+}
+
+QString DataService::getIP() const
+{
+    return IP;
+}
+
+void DataService::setIP(const QString &ip)
+{
+    if (ip.isEmpty())
+    {
+        return;
+    }
+
+    if (IP != ip)
+    {
+        IP = ip;
+        URLPATH = "http://" + IP + ":" + PORT + "/";
+    }
+}
+
+QString DataService::getURLPATH() const
+{
+    return URLPATH;
 }
 
 void DataService::HandleWebServiceData(const QByteArray &data, int controlIdentifier)
