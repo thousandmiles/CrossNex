@@ -2,6 +2,7 @@
 #include "navigationtree.moc"
 #include "newinstancedialog.h"
 #include <QInputDialog>
+#include <QMessageBox>
 
 NavigationTree::NavigationTree(QWidget *parent):
     QTreeWidget(parent),
@@ -36,6 +37,44 @@ void NavigationTree::dropEvent(QDropEvent *event)
     // }
 }
 
+void NavigationTree::traverseTree(QTreeWidgetItem *item) {
+    if (!item) {
+        return;
+    }
+
+    if (item->type() == CustomTreeWidgetItem::FolderType)
+    {
+        folderSet<<item->text(0);
+        for (int i = 0; i < item->childCount(); ++i) {
+            traverseTree(item->child(i));
+        }
+    }
+    else
+    {
+        instanceSet<<item->text(0);
+        for (int i = 0; i < item->childCount(); ++i) {
+            traverseTree(item->child(i));
+        }
+    }
+
+
+}
+
+void NavigationTree::clearTreeSet()
+{
+    folderSet.clear();
+    instanceSet.clear();
+}
+
+bool NavigationTree::isDeleteFolder()
+{
+    QMessageBox msgBox;
+    msgBox.setText("删除文件夹会删除当前文件夹下的所有实例，\n是否继续删除？");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+
+    return msgBox.exec() == QMessageBox::Yes ? true : false;
+}
+
 void NavigationTree::showContextMenu(const QPoint &pos)
 {
     currentNode = itemAt(pos);
@@ -49,6 +88,9 @@ void NavigationTree::showContextMenu(const QPoint &pos)
     QAction *addFolderAction = nullptr;
     QAction *deleteFolderAction = nullptr;
     QAction *renameNodeAction = nullptr;
+
+    clearTreeSet();
+    traverseTree(currentNode);
 
     if (currentNode == rootNode.data())
     {
@@ -81,37 +123,56 @@ void NavigationTree::showContextMenu(const QPoint &pos)
 
         QAction *selectedAction = contextMenu.exec(mapToGlobal(pos));
 
-        if (selectedAction == addAction)
+
+        if (addAction && selectedAction == addAction)
         {
             // do something ?
         }
-        else if (selectedAction == deleteAction)
+        else if (deleteAction && selectedAction == deleteAction)
+        {
+            deleteCurrentNode();
+        }
+        else if (renamFolderAction && selectedAction == renamFolderAction)
         {
 
         }
-        else if (selectedAction == renamFolderAction)
+        else if (addFolderAction && selectedAction == addFolderAction)
         {
 
         }
-        else if (selectedAction == addFolderAction)
+        else if (renameNodeAction && selectedAction == renameNodeAction)
         {
 
         }
-        else if (selectedAction == renameNodeAction)
+        else if (deleteFolderAction && selectedAction == deleteFolderAction)
         {
-
-        }
-        else if (selectedAction == deleteFolderAction)
-        {
-
+            bool del = isDeleteFolder();
+            if (del)
+            {
+                deleteCurrentNode();
+            }
         }
     }
 }
 
 void NavigationTree::createFolder()
 {
-    bool ok;
-    QString folderName = QInputDialog::getText(this, "新建文件夹", "文件夹名称:", QLineEdit::Normal, "", &ok);
+
+    bool ok = false;
+    QString folderName;
+    while (!ok) {
+        folderName = QInputDialog::getText(nullptr, "输入", "请输入文件夹名:", QLineEdit::Normal, "", &ok);
+        if (!ok || folderName == currentNode->text(0))
+        {
+            break;
+        }
+
+        if (folderSet.contains(folderName))
+        {
+            QMessageBox::warning(nullptr, "Error", "文件夹已存在，请重新输入。");
+            ok = false;  // 设置标志为false，继续循环
+        }
+    }
 
     if (ok && !folderName.isEmpty()) {
         addFolder(folderName);
@@ -121,15 +182,13 @@ void NavigationTree::createFolder()
 void NavigationTree::createInstance()
 {
     NewInstanceDialog newInstanceDlg;
+    newInstanceDlg.setInstanceSet(instanceSet);
+
     if (newInstanceDlg.exec() == QDialog::Accepted)
     {
         // 用户点击了OK按钮
         QString ipAddress = newInstanceDlg.getIpAddress();
         QString instanceName = newInstanceDlg.getInstanceName();
-
-        // 在这里可以使用获取到的IP地址和实例名进行后续处理
-        qDebug() << "IP Address: " << ipAddress;
-        qDebug() << "Instance Name: " << instanceName;
 
         addInstance(instanceName);
     }
@@ -147,6 +206,16 @@ void NavigationTree::addInstance(const QString &instanceName)
     CustomTreeWidgetItem *instanceItem = new CustomTreeWidgetItem(currentNode, CustomTreeWidgetItem::NodeType);
     instanceItem->setText(0, instanceName);
     instanceItem->setIcon(0, QIcon(instance));
+}
+
+void NavigationTree::deleteCurrentNode()
+{
+    QTreeWidgetItem *parentItem = currentNode->parent();
+    if (parentItem) {
+        int relativeIndex = parentItem->indexOfChild(currentNode);
+        parentItem->takeChild(relativeIndex);
+        delete currentNode;
+    }
 }
 
 

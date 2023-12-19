@@ -25,6 +25,10 @@ public:
     NavigationTree(QWidget *parent = nullptr);
     void dropEvent(QDropEvent *event) override;
 
+    void traverseTree(QTreeWidgetItem *item);
+    void clearTreeSet();
+    bool isDeleteFolder();
+
 private slots:
     void showContextMenu(const QPoint &pos);
     void createFolder();
@@ -34,10 +38,13 @@ private:
     QScopedPointer<QTreeWidgetItem> rootNode;
     QTreeWidgetItem *currentNode;
     QMenu contextMenu;
+    QSet<QString> instanceSet;
+    QSet<QString> folderSet;
 
 private:
     void addFolder(const QString &folderName);
     void addInstance(const QString &instanceName);
+    void deleteCurrentNode();
 
 };
 
