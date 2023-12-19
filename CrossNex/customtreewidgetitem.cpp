@@ -1,6 +1,6 @@
 #include "customtreewidgetitem.h"
 
-CustomTreeWidgetItem::CustomTreeWidgetItem(QTreeWidget *parent, int type): QTreeWidgetItem(parent, type)
+CustomTreeWidgetItem::CustomTreeWidgetItem(QTreeWidgetItem *parent, int type): QTreeWidgetItem(parent, type)
 {
     setFlags(flags() | Qt::ItemIsEditable);
 }

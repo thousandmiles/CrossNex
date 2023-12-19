@@ -13,13 +13,21 @@ public:
         NodeType
     };
 
-    CustomTreeWidgetItem(QTreeWidget *parent, int type = NodeType);
+    CustomTreeWidgetItem(QTreeWidgetItem *parent, int type = NodeType);
 
     void setItemType(ItemType type);
 
     ItemType getItemType() const
     {
         return static_cast<ItemType>(data(0, Qt::UserRole).toInt());
+    }
+
+public slots:
+    void addNode() {
+        if (getItemType() == FolderType) {
+            CustomTreeWidgetItem *newNode = new CustomTreeWidgetItem(this, NodeType);
+            newNode->setText(0, "新建节点");
+        }
     }
 };
 
