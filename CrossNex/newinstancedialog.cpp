@@ -44,17 +44,28 @@ bool NewInstanceDialog::isValidIpAddress(const QString &ipAddress)
     return match.hasMatch();
 }
 
+void NewInstanceDialog::setInstanceSet(const QSet<QString> &itemSet)
+{
+    instanceSet.clear();
+    instanceSet = itemSet;
+}
+
 void NewInstanceDialog::acceptClicked()
 {
-    // 判断输入框的内容是否为空
-    if (ipLineEdit->text().isEmpty() ||
-        instanceLineEdit->text().isEmpty())
+    QString ip = ipLineEdit->text();
+    QString instance = instanceLineEdit->text();
+    if (ip.isEmpty() ||
+        instance.isEmpty())
     {
         QMessageBox::warning(this, "Error", "IP地址和用户名不能为空，请重新输入。");
     }
-    else if (!isValidIpAddress(ipLineEdit->text()))
+    else if (!isValidIpAddress(ip))
     {
         QMessageBox::warning(this, "Error", "IP地址格式错误，请重新输入。");
+    }
+    else if (instanceSet.contains(instance))
+    {
+        QMessageBox::warning(this, "Error", "实例名已存在，请重新输入。");
     }
     else
     {

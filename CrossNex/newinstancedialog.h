@@ -19,6 +19,8 @@ public:
 
     bool isValidIpAddress(const QString &ipAddress);
 
+    void setInstanceSet(const QSet<QString>& itemSet);
+
 
 private slots:
     void acceptClicked();
@@ -26,6 +28,8 @@ private slots:
 private:
     QLineEdit *ipLineEdit;
     QLineEdit *instanceLineEdit;
+
+    QSet<QString> instanceSet;
 
     static const QRegularExpression ipv4Regex;
 };
