@@ -31,7 +31,8 @@ private slots:
     void createInstance();
 
 private:
-    QScopedPointer<CustomTreeWidgetItem> rootNode;
+    QScopedPointer<QTreeWidgetItem> rootNode;
+    QTreeWidgetItem *currentNode;
     QMenu contextMenu;
 
 private:

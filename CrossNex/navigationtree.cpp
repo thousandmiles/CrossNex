@@ -6,7 +6,8 @@
 NavigationTree::NavigationTree(QWidget *parent):
     QTreeWidget(parent),
     contextMenu(this),
-    rootNode(new CustomTreeWidgetItem(this))
+    rootNode(new QTreeWidgetItem(this)),
+    currentNode(nullptr)
 {
     setColumnCount(1);
     setDragEnabled(true);
@@ -37,10 +38,10 @@ void NavigationTree::dropEvent(QDropEvent *event)
 
 void NavigationTree::showContextMenu(const QPoint &pos)
 {
-    QTreeWidgetItem *item = itemAt(pos);
+    currentNode = itemAt(pos);
     contextMenu.clear();
 
-    if (!item) return;
+    if (!currentNode) return;
 
     QAction *addAction = nullptr;
     QAction *deleteAction = nullptr;
@@ -49,9 +50,8 @@ void NavigationTree::showContextMenu(const QPoint &pos)
     QAction *deleteFolderAction = nullptr;
     QAction *renameNodeAction = nullptr;
 
-    if (item == rootNode.data())
+    if (currentNode == rootNode.data())
     {
-
         addAction = contextMenu.addAction(QIcon(new_instance), "新建实例");
         addFolderAction = contextMenu.addAction(QIcon(new_folder), "新建文件夹");
 
@@ -60,27 +60,24 @@ void NavigationTree::showContextMenu(const QPoint &pos)
 
         QPoint pos = QCursor::pos();
         contextMenu.exec(pos);
-
     }
     else
     {
-        contextMenu.addSeparator();
-        if (item->type() == CustomTreeWidgetItem::FolderType)
+        if (currentNode->type() == CustomTreeWidgetItem::FolderType)
         {
             addAction = contextMenu.addAction(QIcon(new_instance), "新建实例");
-            deleteAction = contextMenu.addAction(QIcon(delete_instance), "删除实例");
             renamFolderAction = contextMenu.addAction(QIcon(rename_folder), "重命名文件夹");
             addFolderAction = contextMenu.addAction(QIcon(new_folder), "新建文件夹");
             deleteFolderAction = contextMenu.addAction(QIcon(delete_folder), "删除文件夹");
+
+            connect(addFolderAction, &QAction::triggered, this, &NavigationTree::createFolder);
+            connect(addAction, &QAction::triggered, this, &NavigationTree::createInstance);
         }
         else
         {
             renameNodeAction = contextMenu.addAction(QIcon(rename_instance), "重命名实例");
             deleteAction = contextMenu.addAction(QIcon(delete_instance), "删除实例");
         }
-
-        connect(addFolderAction, &QAction::triggered, this, &NavigationTree::createFolder);
-        connect(addAction, &QAction::triggered, this, &NavigationTree::createInstance);
 
         QAction *selectedAction = contextMenu.exec(mapToGlobal(pos));
 
@@ -140,14 +137,14 @@ void NavigationTree::createInstance()
 
 void NavigationTree::addFolder(const QString &folderName)
 {
-    CustomTreeWidgetItem *folderItem = new CustomTreeWidgetItem(this, CustomTreeWidgetItem::FolderType);
+    CustomTreeWidgetItem *folderItem = new CustomTreeWidgetItem(currentNode, CustomTreeWidgetItem::FolderType);
     folderItem->setText(0, folderName);
     folderItem->setIcon(0, QIcon(folder));
 }
 
 void NavigationTree::addInstance(const QString &instanceName)
 {
-    CustomTreeWidgetItem *instanceItem = new CustomTreeWidgetItem(this, CustomTreeWidgetItem::NodeType);
+    CustomTreeWidgetItem *instanceItem = new CustomTreeWidgetItem(currentNode, CustomTreeWidgetItem::NodeType);
     instanceItem->setText(0, instanceName);
     instanceItem->setIcon(0, QIcon(instance));
 }
