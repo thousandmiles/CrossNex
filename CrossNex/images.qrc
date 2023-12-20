@@ -12,5 +12,7 @@
         <file>resource/instance.png</file>
         <file>resource/remote_desktop.png</file>
         <file>resource/rename.png</file>
+        <file>resource/collapsed_triangle.png</file>
+        <file>resource/expanded_triangle.png</file>
     </qresource>
 </RCC>
