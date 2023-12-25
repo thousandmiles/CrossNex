@@ -6,11 +6,23 @@
 #include "customtreewidgetitem.h"
 #include <QTreeWidgetItemIterator>
 
+constexpr const char* delete_folder = ":/icon/plus/resource/delete_folder.png";
+constexpr const char* delete_instance = ":/icon/plus/resource/delete_instance.png";
+constexpr const char* new_root = ":/icon/plus/resource/new.png";
+constexpr const char* new_folder = ":/icon/plus/resource/new_folder.png";
+constexpr const char* new_instance = ":/icon/plus/resource/new_instance.png";
+constexpr const char* rename_folder = ":/icon/plus/resource/rename.png";
+constexpr const char* rename_instance = ":/icon/plus/resource/rename.png";
+constexpr const char* folder = ":/icon/plus/resource/folder.png";
+constexpr const char* instance = ":/icon/plus/resource/instance.png";
+//constexpr const char* expanded = ":/icon/plus/resource/expanded_triangle.png";
+//constexpr const char* collapsed = ":/icon/plus/resource/collapsed_triangle.png";
+
 NavigationTree::NavigationTree(QWidget *parent):
     QTreeWidget(parent),
-    contextMenu(this),
     rootNode(new QTreeWidgetItem(this)),
-    currentNode(nullptr)
+    currentNode(nullptr),
+    contextMenu(this)
 {
     setColumnCount(1);
     setDragEnabled(true);
@@ -18,12 +30,6 @@ NavigationTree::NavigationTree(QWidget *parent):
     setDefaultDropAction(Qt::MoveAction);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setContextMenuPolicy(Qt::CustomContextMenu);
-
-    this->setHeaderLabel("实例列表");
-    QFont font = this->headerItem()->font(0);
-    font.setBold(true);
-    this->headerItem()->setFont(0, font);
-
 
     rootNode->setText(0, "新建");
     rootNode->setExpanded(true);  // 设置根节点默认展开
