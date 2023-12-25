@@ -13,6 +13,8 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 find_package(Qt6 REQUIRED COMPONENTS Network)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick)
+find_package(Qt6 REQUIRED COMPONENTS WebEngineWidgets)
+
 
 
 set(PROJECT_SOURCES
@@ -31,6 +33,8 @@ set(PROJECT_SOURCES
         customtreewidgetitem.cpp
         newinstancedialog.h
         newinstancedialog.cpp
+        echartwebengineview.h
+        echartwebengineview.cpp
 
 )
 
@@ -62,6 +66,7 @@ endif()
 
 target_link_libraries(CrossNex PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(CrossNex PRIVATE Qt6::Network)
+target_link_libraries(CrossNex PRIVATE Qt6::WebEngineWidgets)
 
 target_link_libraries(CrossNex PUBLIC
     Qt6::Core
