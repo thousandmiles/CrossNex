@@ -15,4 +15,9 @@
         <file>resource/collapsed_triangle.png</file>
         <file>resource/expanded_triangle.png</file>
     </qresource>
+    <qresource prefix="/echart">
+        <file>EChart/line-simple.html</file>
+        <file>EChart/echarts.js</file>
+    </qresource>
+    <qresource prefix="/new/prefix1"/>
 </RCC>
