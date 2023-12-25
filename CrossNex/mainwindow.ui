@@ -26,15 +26,14 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="NavigationTree" name="treeWidget"/>
-      <widget class="QFrame" name="mainframe">
-       <property name="frameShape">
-        <enum>QFrame::Box</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Raised</enum>
-       </property>
+      <widget class="NavigationTree" name="treeWidget">
+       <column>
+        <property name="text">
+         <string notr="true">1</string>
+        </property>
+       </column>
       </widget>
+      <widget class="EchartWebEngineView" name="mainwidget" native="true"/>
      </widget>
     </item>
    </layout>
@@ -106,7 +105,13 @@
   <customwidget>
    <class>NavigationTree</class>
    <extends>QTreeWidget</extends>
-   <header location="global">navigationtree.h</header>
+   <header>navigationtree.h</header>
+  </customwidget>
+  <customwidget>
+   <class>EchartWebEngineView</class>
+   <extends>QWidget</extends>
+   <header location="global">echartwebengineview.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

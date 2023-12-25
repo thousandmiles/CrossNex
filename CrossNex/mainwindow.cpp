@@ -20,8 +20,16 @@ MainWindow::MainWindow(QWidget *parent)
                                );
 
     ui->menubar->setFixedHeight(30);
+
+    ui->treeWidget->setMaximumWidth(400);
+    ui->treeWidget->setMinimumWidth(200);
     ui->splitter->setStretchFactor(0, 1);
     ui->splitter->setStretchFactor(1, 8);
+
+    // QFont font = ui->treeWidget->headerItem()->font(0);
+    // font.setBold(true);
+    // ui->treeWidget->headerItem()->setFont(0, font);
+    ui->treeWidget->setHeaderLabel("实例列表");
     ui->treeWidget->setStyleSheet("background-color:0;");
     ui->statusbar->showMessage("CrossNex V-1.0");
 
