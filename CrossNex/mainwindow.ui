@@ -33,7 +33,7 @@
         </property>
        </column>
       </widget>
-      <widget class="EchartWebEngineView" name="mainwidget" native="true"/>
+      <widget class="BrowserWindow" name="mainwidget" native="true"/>
      </widget>
     </item>
    </layout>
@@ -108,9 +108,9 @@
    <header>navigationtree.h</header>
   </customwidget>
   <customwidget>
-   <class>EchartWebEngineView</class>
+   <class>BrowserWindow</class>
    <extends>QWidget</extends>
-   <header location="global">echartwebengineview.h</header>
+   <header location="global">browserwindow.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

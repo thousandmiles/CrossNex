@@ -3,6 +3,9 @@
 
 #include <QObject>
 #include <QWebEngineView>
+#include <QTabWidget>
+#include <QVBoxLayout>
+#include <QPushButton>
 
 class EchartWebEngineView : public QWebEngineView
 {
