@@ -35,6 +35,12 @@ set(PROJECT_SOURCES
         newinstancedialog.cpp
         echartwebengineview.h
         echartwebengineview.cpp
+        browserwindow.h
+        browserwindow.cpp
+        tabcontainer.h
+        tabcontainer.cpp
+        tab.h
+        tab.cpp
 
 )
 
@@ -79,6 +85,7 @@ qt_add_qml_module(CrossNex
     URI Charts
     NO_RESOURCE_TARGET_PATH
     DEPENDENCIES QtQuick
+    SOURCES
     SOURCES
 )
 
