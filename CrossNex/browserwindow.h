@@ -3,6 +3,8 @@
 
 #include <QObject>
 #include <QWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
 #include "tabcontainer.h"
 
 class BrowserWindow : public QWidget
@@ -13,9 +15,12 @@ public:
 
 private:
     TabContainer *tabContainer;
+    QPushButton *newTabButton;
+    QPushButton *homeTabButton;
+    QVBoxLayout *layout;
 
-private slots:
-    void createNewTab();
+public slots:
+    void createNewTab(const QString& nodeName);
 
 };
 
