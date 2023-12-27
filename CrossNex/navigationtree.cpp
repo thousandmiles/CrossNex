@@ -37,6 +37,7 @@ NavigationTree::NavigationTree(QWidget *parent):
 
     isParentFolderNameUsed = false;
 
+    connect(this, &NavigationTree::itemClicked, this, &NavigationTree::handleNodeClicked);
     connect(this, &NavigationTree::customContextMenuRequested, this, &NavigationTree::showContextMenu);
 }
 
@@ -295,6 +296,16 @@ void NavigationTree::createInstance()
         QString instanceName = newInstanceDlg.getInstanceName();
 
         addInstance(instanceName);
+    }
+}
+
+void NavigationTree::handleNodeClicked(QTreeWidgetItem *item, int column)
+{
+    if (item != rootNode.data() &&
+        item->type() == CustomTreeWidgetItem::NodeType)
+    {
+        QString nodeName = item->text(column);
+        emit nodeClicked(nodeName);
     }
 }
 

@@ -28,6 +28,7 @@ private slots:
     void showContextMenu(const QPoint &pos);
     void createFolder();
     void createInstance();
+    void handleNodeClicked(QTreeWidgetItem *item, int column);
 
 private:
     QScopedPointer<QTreeWidgetItem> rootNode;
@@ -47,6 +48,9 @@ private:
     void addInstance(const QString &instanceName);
     void deleteCurrentNode();
     void renameNode();
+
+signals:
+    void nodeClicked(const QString& nodeName);
 
 };
 
