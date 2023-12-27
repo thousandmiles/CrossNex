@@ -11,9 +11,9 @@ class TabContainer : public QTabWidget
 public:
     TabContainer(QWidget *parent = nullptr);
 
-    void addTab(const QString& url) {
+    void addTab(const QString& nodeName, const QString& url) {
         Tab *tab = new Tab(url, this);
-        int index = QTabWidget::addTab(tab, "New Tab");
+        int index = QTabWidget::addTab(tab, nodeName);
         setCurrentIndex(index);
     }
 };

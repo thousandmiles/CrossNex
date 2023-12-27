@@ -1,7 +1,7 @@
 #include "tab.h"
 #include <QVBoxLayout>
 
-Tab::Tab(const QString& url,QWidget *parent)
+Tab::Tab(const QString& url, QWidget *parent)
     : QWidget{parent}
 {
     webEngineView = new QWebEngineView(this);
