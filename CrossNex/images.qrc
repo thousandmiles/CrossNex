@@ -19,5 +19,7 @@
         <file>EChart/line-simple.html</file>
         <file>EChart/echarts.js</file>
     </qresource>
-    <qresource prefix="/new/prefix1"/>
+    <qresource prefix="/hello">
+        <file>EChart/hello.html</file>
+    </qresource>
 </RCC>
