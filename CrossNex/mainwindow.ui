@@ -33,7 +33,13 @@
         </property>
        </column>
       </widget>
-      <widget class="BrowserWindow" name="mainwidget" native="true"/>
+      <widget class="TabContainer" name="maintabWidget">
+       <widget class="Tab" name="maintabWidgetPage1">
+        <attribute name="title">
+         <string/>
+        </attribute>
+       </widget>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -108,9 +114,15 @@
    <header>navigationtree.h</header>
   </customwidget>
   <customwidget>
-   <class>BrowserWindow</class>
+   <class>TabContainer</class>
+   <extends>QTabWidget</extends>
+   <header>tabcontainer.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Tab</class>
    <extends>QWidget</extends>
-   <header location="global">browserwindow.h</header>
+   <header>tab.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -33,7 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->treeWidget->setStyleSheet("background-color:0;");
     ui->statusbar->showMessage("CrossNex V-1.0");
 
-    connect(ui->treeWidget, &NavigationTree::nodeClicked, ui->mainwidget, &BrowserWindow::createNewTab);
+    connect(ui->treeWidget, &NavigationTree::nodeClicked,
+            ui->maintabWidget, &TabContainer::createNewTab);
 
 }
 

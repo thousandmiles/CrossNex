@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QTabWidget>
-#include "tab.h"
 
 class TabContainer : public QTabWidget
 {
@@ -11,11 +10,9 @@ class TabContainer : public QTabWidget
 public:
     TabContainer(QWidget *parent = nullptr);
 
-    void addTab(const QString& nodeName, const QString& url) {
-        Tab *tab = new Tab(url, this);
-        int index = QTabWidget::addTab(tab, nodeName);
-        setCurrentIndex(index);
-    }
+    void addTab(const QString& nodeName, const QString& url);
+public slots:
+    void createNewTab(const QString &nodeName);
 };
 
 #endif // TABCONTAINER_H
