@@ -162,8 +162,10 @@ bool NavigationTree::isDeleteInstance()
     return msgBox.exec() == QMessageBox::Yes ? true : false;
 }
 
-void NavigationTree::mousePressEvent(QMouseEvent *event) {
-    if (event->button() == Qt::LeftButton) {
+void NavigationTree::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton)
+    {
         QTreeWidgetItem *item = itemAt(event->pos());
         currentNode = item;
         if (item)
@@ -174,6 +176,21 @@ void NavigationTree::mousePressEvent(QMouseEvent *event) {
 
     // 调用基类的事件处理函数
     QTreeWidget::mousePressEvent(event);
+}
+
+QString NavigationTree::getNodePath(QTreeWidgetItem *node)
+{
+    QString path;
+    QTreeWidgetItem * it = node;
+
+    while (it)
+    {
+        QString nodeName = it->text(0);
+        path.prepend("/" + nodeName);
+        it = it->parent();
+    }
+
+    return path;
 }
 
 void NavigationTree::showContextMenu(const QPoint &pos)
@@ -267,7 +284,8 @@ void NavigationTree::createFolder()
     bool ok = false;
     QString folderName;
 
-    while (!ok) {
+    while (!ok)
+    {
         folderName = QInputDialog::getText(nullptr, "输入", "请输入文件夹名:", QLineEdit::Normal, "", &ok);
         if (!ok)
         {
@@ -302,7 +320,6 @@ void NavigationTree::createInstance()
         QString instanceName = newInstanceDlg.getInstanceName();
 
         name_ip.insert(instanceName, ipAddress);
-
         addInstance(instanceName, ipAddress);
     }
 }
@@ -328,7 +345,7 @@ void NavigationTree::addFolder(const QString &folderName)
     CustomTreeWidgetItem *folderItem = new CustomTreeWidgetItem(currentNode, CustomTreeWidgetItem::FolderType);
     folderItem->setText(0, folderName);
     folderItem->setIcon(0, QIcon(folder));
-
+    qDebug()<<getNodePath(folderItem);
     this->sortItems(0, Qt::AscendingOrder);
 }
 
@@ -338,7 +355,7 @@ void NavigationTree::addInstance(const QString &instanceName, const QString &ipA
     instanceItem->setText(0, instanceName);
     instanceItem->setIcon(0, QIcon(instance));
     instanceItem->ipAddress = ipAddress;
-
+    qDebug()<<getNodePath(instanceItem);
     this->sortItems(0, Qt::AscendingOrder);
 }
 
@@ -348,6 +365,14 @@ void NavigationTree::deleteCurrentNode()
     if (parentItem) {
         int relativeIndex = parentItem->indexOfChild(currentNode);
         parentItem->takeChild(relativeIndex);
+
+        if (currentNode->type() == CustomTreeWidgetItem::NodeType)
+        {
+            QString currentNodeName = currentNode->text(0);
+            name_ip.remove(currentNodeName);
+            qDebug()<<"[delete] remove node from name_ip: "<<currentNodeName;
+        }
+
         delete currentNode;
     }
 }
@@ -391,7 +416,16 @@ void NavigationTree::renameNode()
     }
 
     if (ok && !newName.isEmpty()) {
+
+        QString previousNodeName = currentNode->text(0);
         currentNode->setText(0, newName);
+        QString currentNodeName = newName;
+        if (currentNode->type() == CustomTreeWidgetItem::NodeType)
+        {
+            name_ip.insert(currentNodeName, name_ip[previousNodeName]);
+            name_ip.remove(previousNodeName);
+            qDebug()<<"[rename] remove node from name_ip: "<<previousNodeName;
+        }
     }
 }
 

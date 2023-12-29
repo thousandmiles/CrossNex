@@ -23,6 +23,7 @@ public:
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
+    QString getNodePath(QTreeWidgetItem *node);
 
 
 private slots:
@@ -45,7 +46,7 @@ private:
     QList<QTreeWidgetItem *>currentLevelInstanceList;
     QList<QTreeWidgetItem *>currentLevelFolderList;
 
-    QHash<QString, QString> name_ip;
+    QHash<QString, QString> name_ip;    // 维护所有的实例名及对应IP地址，【新建/重命名/删除】实例时要更新它
 
     bool isParentFolderNameUsed;
 
