@@ -24,6 +24,7 @@ public:
 protected:
     void mousePressEvent(QMouseEvent *event) override;
 
+
 private slots:
     void showContextMenu(const QPoint &pos);
     void createFolder();
@@ -41,17 +42,22 @@ private:
     QSet<QString> nextLevelInstanceSet;
     QSet<QString> nextLevelFolderSet;
 
+    QList<QTreeWidgetItem *>currentLevelInstanceList;
+    QList<QTreeWidgetItem *>currentLevelFolderList;
+
+    QHash<QString, QString> name_ip;
+
     bool isParentFolderNameUsed;
 
 private:
     void addFolder(const QString &folderName);
-    void addInstance(const QString &instanceName);
+    void addInstance(const QString &instanceName, const QString &ipAddress);
     void deleteCurrentNode();
     void renameNode();
 
-signals:
-    void nodeClicked(const QString& nodeName);
 
+signals:
+    void nodeClicked(const QString& nodeName, const QString&ipAddress);
 };
 
 #endif // NAVIGATIONTREE_H

@@ -3,8 +3,8 @@
 #include "newinstancedialog.h"
 #include <QInputDialog>
 #include <QMessageBox>
-#include "customtreewidgetitem.h"
 #include <QTreeWidgetItemIterator>
+#include "customtreewidgetitem.h"
 
 constexpr const char* delete_folder = ":/icon/plus/resource/delete_folder.png";
 constexpr const char* delete_instance = ":/icon/plus/resource/delete_instance.png";
@@ -25,8 +25,8 @@ NavigationTree::NavigationTree(QWidget *parent):
     contextMenu(this)
 {
     setColumnCount(1);
-    setDragEnabled(true);
-    setAcceptDrops(true);
+    //setDragEnabled(true);
+    //setAcceptDrops(true);
     setDefaultDropAction(Qt::MoveAction);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -105,10 +105,12 @@ void NavigationTree::setCurrentLevelSet(QTreeWidgetItem *item)
             if((*it)->type() == CustomTreeWidgetItem::NodeType)
             {
                 currentLevelInstanceSet<<currentName;
+                currentLevelInstanceList<<(*it);
             }
             else
             {
                 currentLevelFolderSet<<currentName;
+                currentLevelFolderList<<(*it);
             }
         }
         ++it;
@@ -188,7 +190,7 @@ void NavigationTree::showContextMenu(const QPoint &pos)
     QAction *deleteFolderAction = nullptr;
     QAction *renameNodeAction = nullptr;
 
-    setTreeSet(currentNode);
+    // setTreeSet(currentNode);
     setCurrentLevelSet(currentNode);
     setNextLevelSet(currentNode);
 
@@ -260,6 +262,8 @@ void NavigationTree::showContextMenu(const QPoint &pos)
 void NavigationTree::createFolder()
 {
 
+    setTreeSet(rootNode.data());
+
     bool ok = false;
     QString folderName;
 
@@ -270,7 +274,7 @@ void NavigationTree::createFolder()
             break;
         }
 
-        if (nextLevelFolderSet.contains(folderName))
+        if (folderSet.contains(folderName) || folderName == currentNode->text(0))
         {
             QMessageBox::warning(nullptr, "Error", "文件夹已存在，请重新输入。");
             ok = false;  // 设置标志为false，继续循环
@@ -287,7 +291,9 @@ void NavigationTree::createInstance()
 {
     NewInstanceDialog newInstanceDlg;
 
-    newInstanceDlg.setInstanceSet(nextLevelInstanceSet);
+    setTreeSet(rootNode.data());
+
+    newInstanceDlg.setInstanceSet(instanceSet);
 
     if (newInstanceDlg.exec() == QDialog::Accepted)
     {
@@ -295,7 +301,9 @@ void NavigationTree::createInstance()
         QString ipAddress = newInstanceDlg.getIpAddress();
         QString instanceName = newInstanceDlg.getInstanceName();
 
-        addInstance(instanceName);
+        name_ip.insert(instanceName, ipAddress);
+
+        addInstance(instanceName, ipAddress);
     }
 }
 
@@ -305,7 +313,13 @@ void NavigationTree::handleNodeClicked(QTreeWidgetItem *item, int column)
         item->type() == CustomTreeWidgetItem::NodeType)
     {
         QString nodeName = item->text(column);
-        emit nodeClicked(nodeName);
+
+        if (!name_ip.contains(nodeName))
+        {
+            QMessageBox::warning(nullptr, "Error", "当前实例未配置IP地址！");
+        }
+
+        emit nodeClicked(nodeName, name_ip[nodeName]);
     }
 }
 
@@ -314,13 +328,18 @@ void NavigationTree::addFolder(const QString &folderName)
     CustomTreeWidgetItem *folderItem = new CustomTreeWidgetItem(currentNode, CustomTreeWidgetItem::FolderType);
     folderItem->setText(0, folderName);
     folderItem->setIcon(0, QIcon(folder));
+
+    this->sortItems(0, Qt::AscendingOrder);
 }
 
-void NavigationTree::addInstance(const QString &instanceName)
+void NavigationTree::addInstance(const QString &instanceName, const QString &ipAddress)
 {
     CustomTreeWidgetItem *instanceItem = new CustomTreeWidgetItem(currentNode, CustomTreeWidgetItem::NodeType);
     instanceItem->setText(0, instanceName);
     instanceItem->setIcon(0, QIcon(instance));
+    instanceItem->ipAddress = ipAddress;
+
+    this->sortItems(0, Qt::AscendingOrder);
 }
 
 void NavigationTree::deleteCurrentNode()
@@ -338,7 +357,8 @@ void NavigationTree::renameNode()
     bool ok = false;
     QString newName;
 
-    setCurrentLevelSet(currentNode);
+    // setCurrentLevelSet(currentNode);
+    setTreeSet(rootNode.data());
 
     while (!ok) {
         newName = QInputDialog::getText(nullptr, "重命名", "请输入新的名字:", QLineEdit::Normal, "", &ok);
@@ -354,14 +374,14 @@ void NavigationTree::renameNode()
             continue;
         }
 
-        if (currentNode->type() == CustomTreeWidgetItem::NodeType && currentLevelInstanceSet.contains(newName))
+        if (currentNode->type() == CustomTreeWidgetItem::NodeType && instanceSet.contains(newName))
         {
             QMessageBox::warning(nullptr, "Error", "名字已存在，请重新输入。");
             ok = false;  // 设置标志为false，继续循环
             continue;
         }
 
-        if (currentNode->type() == CustomTreeWidgetItem::FolderType && currentLevelFolderSet.contains(newName))
+        if (currentNode->type() == CustomTreeWidgetItem::FolderType && folderSet.contains(newName))
         {
             QMessageBox::warning(nullptr, "Error", "名字已存在，请重新输入。");
             ok = false;  // 设置标志为false，继续循环
