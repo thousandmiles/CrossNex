@@ -33,10 +33,6 @@ set(PROJECT_SOURCES
         customtreewidgetitem.cpp
         newinstancedialog.h
         newinstancedialog.cpp
-        echartwebengineview.h
-        echartwebengineview.cpp
-        browserwindow.h
-        browserwindow.cpp
         tabcontainer.h
         tabcontainer.cpp
         tab.h

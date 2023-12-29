@@ -18,6 +18,7 @@
     <qresource prefix="/echart">
         <file>EChart/line-simple.html</file>
         <file>EChart/echarts.js</file>
+        <file>EChart/main-page.html</file>
     </qresource>
     <qresource prefix="/hello">
         <file>EChart/hello.html</file>
