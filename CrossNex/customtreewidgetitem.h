@@ -22,6 +22,17 @@ public:
         return static_cast<ItemType>(data(0, Qt::UserRole).toInt());
     }
 
+    bool operator<(const QTreeWidgetItem &other) const override {
+        // 按照type排序
+        if (type() != other.type())
+            return type() < other.type();
+
+        // 在相同type的情况下按照名字排序
+        return text(0) < other.text(0);
+    }
+public:
+    QString ipAddress;
+
 public slots:
     void addNode() {
         if (getItemType() == FolderType) {
@@ -29,6 +40,8 @@ public slots:
             newNode->setText(0, "新建节点");
         }
     }
+
+    void myItemClicked(CustomTreeWidgetItem *item, int column);
 };
 
 #endif // CUSTOMTREEWIDGETITEM_H
