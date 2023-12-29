@@ -12,7 +12,7 @@ public:
 
     void addTab(const QString& nodeName, const QString& url);
 public slots:
-    void createNewTab(const QString &nodeName);
+    void createNewTab(const QString &nodeName, const QString& ipAddress);
 };
 
 #endif // TABCONTAINER_H

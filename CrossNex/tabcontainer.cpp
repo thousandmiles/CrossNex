@@ -18,7 +18,7 @@ void TabContainer::addTab(const QString &nodeName, const QString &url) {
     setCurrentIndex(index);
 }
 
-void TabContainer::createNewTab(const QString& nodeName)
+void TabContainer::createNewTab(const QString& nodeName, const QString& ipAddress)
 {
-    this->addTab(nodeName, "qrc:/echart/EChart/line-simple.html");
+    this->addTab(nodeName, "qrc:/echart/EChart/main-page.html");
 }
