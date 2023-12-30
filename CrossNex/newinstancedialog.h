@@ -18,6 +18,7 @@ public:
     QString getInstanceName() const;
 
     bool isValidIpAddress(const QString &ipAddress);
+    bool isValidInstanceName(const QString &instanceName);
 
     void setInstanceSet(const QSet<QString>& itemSet);
 
@@ -32,6 +33,7 @@ private:
     QSet<QString> instanceSet;
 
     static const QRegularExpression ipv4Regex;
+    QSet<QString> namelimits;
 };
 
 #endif // NEWINSTANCEDIALOG_H

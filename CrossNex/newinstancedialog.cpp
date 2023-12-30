@@ -24,6 +24,8 @@ NewInstanceDialog::NewInstanceDialog(QWidget *parent) : QDialog(parent)
     formLayout->addRow("实例名:", instanceLineEdit);
     formLayout->addRow(okButton, cancelButton);
 
+    namelimits<<"!"<<"@"<<"#"<<"$"<<"%"<<"^"<<"&"<<"*"<<"=";
+
     connect(okButton, &QPushButton::clicked, this, &NewInstanceDialog::acceptClicked);
     connect(cancelButton, &QPushButton::clicked, this, &NewInstanceDialog::reject);
 }
@@ -44,6 +46,18 @@ bool NewInstanceDialog::isValidIpAddress(const QString &ipAddress)
     return match.hasMatch();
 }
 
+bool NewInstanceDialog::isValidInstanceName(const QString &instanceName)
+{
+    for (int i = 0; i < instanceName.size(); ++i)
+    {
+        if (namelimits.contains(instanceName[i]))
+        {
+            return false;
+        }
+    }
+    return true;
+}
+
 void NewInstanceDialog::setInstanceSet(const QSet<QString> &itemSet)
 {
     instanceSet.clear();
@@ -62,6 +76,10 @@ void NewInstanceDialog::acceptClicked()
     else if (!isValidIpAddress(ip))
     {
         QMessageBox::warning(this, "Error", "IP地址格式错误，请重新输入。");
+    }
+    else if (!isValidInstanceName(instance))
+    {
+        QMessageBox::warning(this, "Error", "实例名不支持特殊字符，请重新输入。");
     }
     else if (instanceSet.contains(instance))
     {
