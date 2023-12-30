@@ -39,14 +39,17 @@ NavigationTree::NavigationTree(QWidget *parent):
     rootNode->setExpanded(true);  // 设置根节点默认展开
     rootNode->setIcon(0, QIcon(new_root));
 
+    folderName_path.insert(rootNode->text(0), "/新建/");
+
     isParentFolderNameUsed = false;
 
     // 构建文件路径
     configFilePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation) + "/CrossNex";
-    instanceConfigFile = configFilePath + "/CrossNexII.cnx";
-    folderConfigFile = configFilePath + "/CrossNexFF.cnx";
+    instanceConfigFile = configFilePath + "/CrossNexII.txt";
+    folderConfigFile = configFilePath + "/CrossNexFF.txt";
 
     createConfigFile();
+    reloadTreeFromConfig();
 
     connect(this, &NavigationTree::itemClicked, this, &NavigationTree::handleNodeClicked);
     connect(this, &NavigationTree::customContextMenuRequested, this, &NavigationTree::showContextMenu);
@@ -56,6 +59,7 @@ NavigationTree::NavigationTree(QWidget *parent):
     connect(this, &NavigationTree::folderCreated, this, &NavigationTree::handleFolderCreated);
     connect(this, &NavigationTree::instanceDeleted, this, &NavigationTree::handleInstanceDeleted);
     connect(this, &NavigationTree::folderDeleted, this, &NavigationTree::handleFolderDeleted);
+    connect(this, &NavigationTree::writeConfig, this, &NavigationTree::writeConfigToFile);
 
 }
 
@@ -264,8 +268,8 @@ void NavigationTree::showContextMenu(const QPoint &pos)
     QAction *renameNodeAction = nullptr;
 
     // setTreeSet(currentNode);
-    setCurrentLevelSet(currentNode);
-    setNextLevelSet(currentNode);
+    // setCurrentLevelSet(currentNode);
+    // setNextLevelSet(currentNode);
 
     if (currentNode == rootNode.data())
     {
@@ -374,7 +378,8 @@ void NavigationTree::createInstance()
         // 用户点击了OK按钮
         QString ipAddress = newInstanceDlg.getIpAddress();
         QString instanceName = newInstanceDlg.getInstanceName();
-        addInstance(instanceName, ipAddress);
+        QString currentDateTime = QDateTime::currentDateTime().toString();
+        addInstance(instanceName, ipAddress, currentDateTime);
     }
 }
 
@@ -404,6 +409,8 @@ void NavigationTree::handleInstanceNameChanged(const QString &previous, const QS
 
     instanceName_date.insert(current, instanceName_date[previous]);
     instanceName_date.remove(previous);
+
+    emit writeConfig();
 }
 
 void NavigationTree::handleInstanceCreated(const Instance_Node_Config &config, const QString &instanceName)
@@ -411,17 +418,23 @@ void NavigationTree::handleInstanceCreated(const Instance_Node_Config &config, c
     instanceName_ip.insert(instanceName, config.IP);
     instanceName_path.insert(instanceName, config.Path);
     instanceName_date.insert(instanceName, config.Date);
+
+    emit writeConfig();
 }
 
 void NavigationTree::handleFolderNameChanged(const QString &previous, const QString &current)
 {
     folderName_path.insert(current, folderName_path[previous]);
     folderName_path.remove(previous);
+
+    emit writeConfig();
 }
 
 void NavigationTree::handleFolderCreated(const Folder_Node_Config &config, const QString &folderName)
 {
     folderName_path.insert(folderName, config.Path);
+
+    emit writeConfig();
 }
 
 void NavigationTree::handleInstanceDeleted(const QString &instanceName)
@@ -429,11 +442,14 @@ void NavigationTree::handleInstanceDeleted(const QString &instanceName)
     instanceName_ip.remove(instanceName);
     instanceName_path.remove(instanceName);
     instanceName_date.remove(instanceName);
+
+    emit writeConfig();
 }
 
 void NavigationTree::handleFolderDeleted(const QString &folderName)
 {
     folderName_path.remove(folderName);
+    emit writeConfig();
 }
 
 void NavigationTree::addFolder(const QString &folderName)
@@ -448,10 +464,12 @@ void NavigationTree::addFolder(const QString &folderName)
     config.Path = getNodePath(folderItem);
     config.Type = "folder";
 
+    qDebug()<<"config.Path: "<<config.Path;
+
     emit folderCreated(config, folderName);
 }
 
-void NavigationTree::addInstance(const QString &instanceName, const QString &ipAddress)
+void NavigationTree::addInstance(const QString &instanceName, const QString &ipAddress, const QString &createTime)
 {
     CustomTreeWidgetItem *instanceItem = new CustomTreeWidgetItem(currentNode, CustomTreeWidgetItem::NodeType);
     instanceItem->setText(0, instanceName);
@@ -459,12 +477,10 @@ void NavigationTree::addInstance(const QString &instanceName, const QString &ipA
 
     this->sortItems(0, Qt::AscendingOrder);
 
-    QDateTime currentDateTime = QDateTime::currentDateTime();
-
     Instance_Node_Config config;
     config.IP = ipAddress;
     config.Path = getNodePath(instanceItem);
-    config.Date = currentDateTime.toString();
+    config.Date = createTime;
     config.Type = "instance";
 
     emit instanceCreated(config, instanceName);
@@ -552,33 +568,16 @@ void NavigationTree::renameNode()
 void NavigationTree::writeStringToFile(const QString &str, const QString &filePath)
 {
     QFile file(filePath);
-    if (file.open(QIODevice::WriteOnly))
+    if (file.open(QIODevice::Append))
     {
-        QDataStream out(&file);
-        out << str;
+        QTextStream out(&file);
+        out<<str;
         file.close();
-        qDebug() << "String written to file successfully.";
+        qDebug() << "String written to file: "<<str;
     }
     else
     {
         qDebug() << "Failed to open the file for writing.";
-    }
-}
-
-void NavigationTree::readStringFromFile(QString &result, const QString &filePath)
-{
-    QFile file(filePath);
-
-    if (file.open(QIODevice::ReadOnly))
-    {
-        QDataStream in(&file);
-        in >> result;
-        file.close();
-        qDebug() << "String read from file: " << result;
-    }
-    else
-    {
-        qDebug() << "Failed to open the file for reading.";
     }
 }
 
@@ -638,12 +637,12 @@ void NavigationTree::serializeFolder(Folder_Node_Config *folderConfig)
     QString _type(QString("[Type : %1] ").arg(folderConfig->Type));
     QString _path(QString("[Path : %1] ").arg(folderConfig->Path));
 
-    QString dataStream = _type + _path;
+    QString dataStream = _type + _path + "\n\r";
 
     writeStringToFile(dataStream, folderConfigFile);
 }
 
-void NavigationTree::SerializeInstance(Instance_Node_Config *instanceConfig)
+void NavigationTree::serializeInstance(Instance_Node_Config *instanceConfig)
 {
     if (instanceConfig == nullptr)
     {
@@ -656,9 +655,217 @@ void NavigationTree::SerializeInstance(Instance_Node_Config *instanceConfig)
     QString _Date(QString("[Date : %1] ").arg(instanceConfig->Date));
 
 
-    QString dataStream = _type + _path + _IP + _Date;
+    QString dataStream = _type + _path + _IP + _Date + "\n\r";
 
     writeStringToFile(dataStream, instanceConfigFile);
+}
+
+void NavigationTree::writeConfigToFile()
+{
+    setTreeSet(rootNode.data());
+    removeConfigFile();
+
+    Instance_Node_Config instanceConfig;
+    QSet<QString>::const_iterator instance;
+    for (instance = instanceSet.constBegin(); instance != instanceSet.constEnd(); ++instance)
+    {
+        instanceConfig.IP = instanceName_ip[*instance];
+        instanceConfig.Path = instanceName_path[*instance];
+        instanceConfig.Date = instanceName_date[*instance];
+        instanceConfig.Type = "instance";
+
+        serializeInstance(&instanceConfig);
+    }
+
+    Folder_Node_Config folderConfig;
+
+    QTreeWidgetItemIterator it(this);
+    qDebug()<<"folderName_path: "<<folderName_path;
+    while (*it)
+    {
+        QTreeWidgetItem *item = *it;
+
+        if (item->type() == CustomTreeWidgetItem::FolderType)
+        {
+            QString folderName = item->text(0);
+            if (folderName_path.contains(folderName))
+            {
+                folderConfig.Path = folderName_path[folderName];
+                folderConfig.Type = "folder";
+                serializeFolder(&folderConfig);
+            }
+        }
+        ++it;
+    }
+}
+
+void NavigationTree::removeConfigFile()
+{
+    if (isFileExist(folderConfigFile))
+    {
+        QFile file(folderConfigFile);
+        file.remove();
+    }
+
+    if (isFileExist(instanceConfigFile))
+    {
+        QFile file(instanceConfigFile);
+        file.remove();
+    }
+}
+
+void NavigationTree::reloadTreeFromConfig()
+{
+    if (isFileExist(folderConfigFile))
+    {
+        reloadFolderConfig(folderConfigFile);
+    }
+
+    if (isFileExist(instanceConfigFile))
+    {
+        //reloadInstanceConfig(instanceConfigFile);
+    }
+}
+
+void NavigationTree::reloadFolderConfig(const QString &folderCfg)
+{
+    QFile file(folderCfg);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream in(&file);
+
+        while (!in.atEnd())
+        {
+            QString line = in.readLine();
+            int start = line.indexOf("/");
+            int end = line.lastIndexOf("/");
+
+            QString pathSubstring = line.mid(start + 1, end - start - 1);
+
+            QStringList pathFields = pathSubstring.split("/", Qt::SkipEmptyParts);
+
+            // qDebug() << "Path Fields: " << pathFields;
+            createFolderFromConfig(pathFields);
+        }
+
+        file.close();
+        qDebug() << "folderCfg reading and parsing completed.";
+    }
+    else
+    {
+        qDebug() << "Failed to open the folderCfg for reading.";
+    }
+
+}
+
+void NavigationTree::reloadInstanceConfig(const QString &instanceCfg)
+{
+    QFile file(instanceCfg);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+        QTextStream in(&file);
+
+        while (!in.atEnd())
+        {
+            QString line = in.readLine();
+            // 提取 Path
+            int pathStart = line.indexOf("[Path : ") + 8;
+            int pathEnd = line.indexOf("]", pathStart);
+            QString path = line.mid(pathStart, pathEnd - pathStart);
+            QStringList pathFields = path.split("/", Qt::SkipEmptyParts);
+
+            int fieldSize = pathFields.size();
+            QString instance = fieldSize > 1 ? pathFields[fieldSize - 1] : "";
+            QString parent = fieldSize > 1 ? pathFields[fieldSize - 2] : "";
+
+            // 提取 IP
+            int ipStart = line.indexOf("[IP : ") + 6;
+            int ipEnd = line.indexOf("]", ipStart);
+            QString ip = line.mid(ipStart, ipEnd - ipStart);
+
+            // 提取 Date
+            int dateStart = line.indexOf("[Date : ") + 8;
+            int dateEnd = line.indexOf("]", dateStart);
+            QString date = line.mid(dateStart, dateEnd - dateStart);
+
+            qDebug() << "Path: " << pathFields;
+            qDebug() << "Instance: " << instance;
+            qDebug() << "Parent: " << parent;
+            qDebug() << "IP: " << ip;
+            qDebug() << "Date: " << date;
+
+            createINstanceFromConfig(instance, parent, ip, date);
+        }
+
+        file.close();
+        qDebug() << "instanceCfg reading and parsing completed.";
+    }
+    else
+    {
+        qDebug() << "Failed to open the instanceCfg for reading.";
+    }
+
+}
+
+void NavigationTree::createFolderFromConfig(const QStringList &folderList)
+{
+    QString currentFolderName;
+    QString parentFolderName;
+    folderSet.clear();
+
+    for (int i = 0; i < folderList.size(); ++i)
+    {
+        currentFolderName = folderList[i];
+
+        if (currentFolderName == "新建")
+        {
+            currentNode = rootNode.data();
+            continue;
+        }
+
+        if (folderSet.contains(parentFolderName))
+        {
+            QTreeWidgetItemIterator it(this);
+            while (*it)
+            {
+                QTreeWidgetItem *item = *it;
+                if (item->text(0) == parentFolderName)
+                {
+                    currentNode = item;
+                    break;
+                }
+
+                ++it;
+            }
+        }
+
+        folderSet.insert(currentFolderName);
+        addFolder(currentFolderName);
+        parentFolderName = currentFolderName;
+    }
+}
+
+void NavigationTree::createINstanceFromConfig(const QString &instance, const QString &parent, const QString &ip, const QString &date)
+{
+    if (instance.isEmpty() || parent.isEmpty() || ip.isEmpty() || date.isEmpty())
+    {
+        return;
+    }
+
+    QTreeWidgetItemIterator it(this);
+    while (*it)
+    {
+        QTreeWidgetItem *item = *it;
+
+        if (item->text(0) == parent && item->type() == CustomTreeWidgetItem::FolderType)
+        {
+            currentNode = item;
+            addInstance(instance, ip, date);
+            break;
+        }
+
+        ++it;
+    }
 }
 
 

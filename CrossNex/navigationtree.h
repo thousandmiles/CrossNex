@@ -60,8 +60,8 @@ private:
     QScopedPointer<QTreeWidgetItem> rootNode;
     QTreeWidgetItem *currentNode;
     QMenu contextMenu;
-    QSet<QString> instanceSet;
-    QSet<QString> folderSet;
+    QSet<QString> instanceSet;          // 所有实例名
+    QSet<QString> folderSet;            // 所有文件夹名
     QSet<QString> currentLevelInstanceSet;
     QSet<QString> currentLevelFolderSet;
     QSet<QString> nextLevelInstanceSet;
@@ -84,14 +84,23 @@ private:
 
 private:
     void addFolder(const QString &folderName);
-    void addInstance(const QString &instanceName, const QString &ipAddress);
+    void addInstance(const QString &instanceName, const QString &ipAddress, const QString &createTime);
     void deleteCurrentNode();
     void renameNode();
     void writeStringToFile(const QString& str, const QString &filePath);
-    void readStringFromFile(QString &result, const QString &filePath);
     void createConfigFile();
     void serializeFolder(Folder_Node_Config* folderConfig);
-    void SerializeInstance(Instance_Node_Config* instanceConfig);
+    void serializeInstance(Instance_Node_Config* instanceConfig);
+    void writeConfigToFile();
+    void removeConfigFile();
+    void reloadTreeFromConfig();
+    void reloadFolderConfig(const QString &folderCfg);
+    void reloadInstanceConfig(const QString &instanceCfg);
+    void createFolderFromConfig(const QStringList &folderList);
+    void createINstanceFromConfig(const QString &instance,
+                                  const QString &parent,
+                                  const QString &ip,
+                                  const QString &date);
 
 
 signals:
@@ -103,6 +112,8 @@ signals:
     void folderNameChanged(const QString& previous, const QString& current);
     void folderCreated(const Folder_Node_Config& config, const QString& folderName);
     void folderDeleted(const QString& instanceName);
+
+    void writeConfig();
 };
 
 #endif // NAVIGATIONTREE_H
