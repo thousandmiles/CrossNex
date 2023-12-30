@@ -7,6 +7,21 @@
 #include <QMenu>
 #include <QMouseEvent>
 
+typedef struct FOLDER_NODE_CONFIG
+{
+    QString Type; // "folder"
+    QString Path; // "/新建/F1/F2/"
+}Folder_Node_Config;
+
+typedef struct INSTANCE_NODE_CONFIG
+{
+    QString Type; // "instance"
+    QString Path; // "/新建/F1/F2/aaa"
+    QString IP;
+    QString Date;
+}Instance_Node_Config;
+
+
 class NavigationTree : public QTreeWidget
 {
     Q_OBJECT
@@ -20,6 +35,8 @@ public:
     void setNextLevelSet(QTreeWidgetItem *item);
     bool isDeleteFolder();
     bool isDeleteInstance();
+    bool isFileExist(const QString& filePath);
+    bool isDirExist(const QString& dirPath);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -31,6 +48,13 @@ private slots:
     void createFolder();
     void createInstance();
     void handleNodeClicked(QTreeWidgetItem *item, int column);
+    void handleInstanceNameChanged(const QString& previous, const QString& current);
+    void handleInstanceCreated(const Instance_Node_Config& config, const QString& instanceName);
+    void handleFolderNameChanged(const QString& previous, const QString& current);
+    void handleFolderCreated(const Folder_Node_Config& config, const QString& folderName);
+    void handleInstanceDeleted(const QString& instanceName);
+    void handleFolderDeleted(const QString& folderName);
+
 
 private:
     QScopedPointer<QTreeWidgetItem> rootNode;
@@ -46,7 +70,15 @@ private:
     QList<QTreeWidgetItem *>currentLevelInstanceList;
     QList<QTreeWidgetItem *>currentLevelFolderList;
 
-    QHash<QString, QString> name_ip;    // 维护所有的实例名及对应IP地址，【新建/重命名/删除】实例时要更新它
+    QString configFilePath;
+    QString instanceConfigFile;
+    QString folderConfigFile;
+
+    QHash<QString, QString> instanceName_ip;    // 维护所有的实例名及对应IP地址，【新建/重命名/删除】实例时要更新它
+    QHash<QString, QString> instanceName_path;
+    QHash<QString, QString> instanceName_date;
+
+    QHash<QString, QString> folderName_path;
 
     bool isParentFolderNameUsed;
 
@@ -55,10 +87,22 @@ private:
     void addInstance(const QString &instanceName, const QString &ipAddress);
     void deleteCurrentNode();
     void renameNode();
+    void writeStringToFile(const QString& str, const QString &filePath);
+    void readStringFromFile(QString &result, const QString &filePath);
+    void createConfigFile();
+    void serializeFolder(Folder_Node_Config* folderConfig);
+    void SerializeInstance(Instance_Node_Config* instanceConfig);
 
 
 signals:
-    void nodeClicked(const QString& nodeName, const QString&ipAddress);
+    void nodeClicked(const QString& nodeName, const QString& ipAddress);
+    void instanceNameChanged(const QString& previous, const QString& current);
+    void instanceCreated(const Instance_Node_Config& config, const QString& instanceName);
+    void instanceDeleted(const QString& instanceName);
+
+    void folderNameChanged(const QString& previous, const QString& current);
+    void folderCreated(const Folder_Node_Config& config, const QString& folderName);
+    void folderDeleted(const QString& instanceName);
 };
 
 #endif // NAVIGATIONTREE_H
