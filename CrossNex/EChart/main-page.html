@@ -2,446 +2,119 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script type="text/javascript"
-        src="./echarts.js"></script>
-    <title>Demo</title>
-    <style>
-        html,
-        body {
-            margin: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" src="./echarts.js"></script>
+  <title>Demo</title>
+  <style>
+    html,
+    body {
+      margin: 0;
+    }
 
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: row;
+      height: 100vh;
+    }
 
-        .row {
-            display: flex;
-            justify-content: space-around;
-            flex: 1;
-        }
+    .leftwidget {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      flex: 2;
+    }
 
-        .module_1 {
-            flex: 1;
-            align-items: center;
-            margin: 0;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .rightwidget {
+      display: flex;
+      justify-content: space-around;
+      flex: 3;
+    }
 
-        .module_2 {
-            flex: 1;
-            align-items: center;
-            margin: 0;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
+    .lefttop {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      background-color: rgb(188, 173, 230);
+    }
 
-        .module_1:nth-child(1) {
-            background-color: #FFD700;
-            /* 模块1的背景颜色 */
-        }
+    .memory_trend_container {
+      flex: 1;
+      background-color: rgb(238, 205, 144);
+    }
 
-        .module_1:nth-child(2) {
-            background-color: #90EE90;
-            /* 模块2的背景颜色 */
-        }
+    /*-------------------------------------*/
+    .lefttop_left {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      background-color: rgb(10, 171, 224);
+    }
 
-        .module_1:nth-child(3) {
-            background-color: #6911ee;
-            /* 模块3的背景颜色 */
-        }
+    .disk_container {
+      flex: 3;
+      background-color: rgb(65, 70, 63);
+    }
 
-        .module_2:nth-child(1) {
-            background-color: #00bfff;
-            /* 模块1的背景颜色 */
-        }
+    /*-------------------------------------*/
 
-        .module_2:nth-child(2) {
-            background-color: #ee9090;
-            /* 模块2的背景颜色 */
-        }
 
-        .module_2:nth-child(3) {
-            background-color: #ee1196;
-            /* 模块3的背景颜色 */
-        }
+    /*-------------------------------------*/
+    .cpu_container {
+      flex: 1;
+      background-color: rgb(152, 201, 218);
+    }
 
-        .chart {
-            flex: 1;
-            align-items: center;
-            margin: 0;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #FFA07A;
-            /* 图表区域的背景颜色 */
-        }
-		
-		/* 设置 div 的样式 */
-        #textContainer_1 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(to right, #ff00cc, #3333ff); /* 使用渐变背景色 */
-            color: white; /* 设置文字颜色为白色 */
-            font-family: 'Arial', sans-serif; /* 设置字体 */
-            font-size: 2em; /* 设置字体大小 */
-            text-align: center;
-            overflow: hidden;
-            position: relative;
-        }
-		
-		/* 设置 div 的样式 */
-        #textContainer_2 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(to right, #ee9090, #ff00cc); /* 使用渐变背景色 */
-            color: white; /* 设置文字颜色为白色 */
-            font-family: 'Arial', sans-serif; /* 设置字体 */
-            font-size: 2em; /* 设置字体大小 */
-            text-align: center;
-            overflow: hidden;
-            position: relative;
-        }
-		
-		/* 设置 div 的样式 */
-        #textContainer_3 {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(to right, #6911ee, #FFD700); /* 使用渐变背景色 */
-            color: white; /* 设置文字颜色为白色 */
-            font-family: 'Arial', sans-serif; /* 设置字体 */
-            font-size: 2em; /* 设置字体大小 */
-            text-align: center;
-            overflow: hidden;
-            position: relative;
-        }
+    .memory_container {
+      flex: 1;
+      background-color: rgb(158, 22, 102);
+    }
 
-    </style>
+    /*-------------------------------------*/
+
+
+    .module_1 {
+      flex: 1;
+      align-items: center;
+      margin: 0;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      ;
+    }
+
+    .process_list_container {
+      flex: 1;
+      align-items: center;
+      margin: 0;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      ;
+    }
+  </style>
 </head>
 
 <body>
 
-    <div class="row">
-        <div class="module_1" id="chart1"></div>
-        <div class="module_1" id="chart2"></div>
-        <div class="module_1" id="chart3"></div>
+  <div class="leftwidget">
+
+    <div class="lefttop">
+      <div class="lefttop_left">
+        <div class="cpu_container">CPU信息</div>
+        <div class="memory_container">内存信息</div>
+      </div>
+      <div class="disk_container">磁盘信息</div>
     </div>
+    <div class="memory_trend_container">内存趋势变化</div>
+  </div>
 
-    <div class="row">
-        <div class="module_2" id="textContainer_1">
-			Hello World!
-		</div>
-        <div class="module_2" id="textContainer_2">
-			Amazing CrossNex!
-		</div>
-        <div class="module_2" id="textContainer_3">
-			To do better!
-		</div>
-    </div>
-
-    <div class="row">
-        <div class="chart" id="main_chart">图表</div>
-    </div>
-
-    <script type="text/javascript">
-        var dom = document.getElementById('main_chart');
-        var myChart = echarts.init(dom, null, {
-            renderer: 'canvas',
-            useDirtyRect: false
-        });
-        var app = {};
-
-        var option;
-
-        option = {
-            legend: {},
-            tooltip: {},
-            dataset: {
-                source: [
-                    ['product', '2015', '2016', '2017'],
-                    ['Matcha Latte', 43.3, 85.8, 93.7],
-                    ['Milk Tea', 83.1, 73.4, 55.1],
-                    ['Cheese Cocoa', 86.4, 65.2, 82.5],
-                    ['Walnut Brownie', 72.4, 53.9, 39.1]
-                ]
-            },
-            xAxis: { type: 'category' },
-            yAxis: {},
-            // Declare several bar series, each will be mapped
-            // to a column of dataset.source by default.
-            series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }]
-        };
-
-        if (option && typeof option === 'object') {
-            myChart.setOption(option);
-        }
-
-        window.addEventListener('resize', myChart.resize);
-    </script>
-	
-	<script type="text/javascript">
-    var dom = document.getElementById('chart1');
-    var myChart = echarts.init(dom, null, {
-      renderer: 'canvas',
-      useDirtyRect: false
-    });
-    var app = {};
-    
-    var option;
-
-    option = {
-  series: [
-    {
-      type: 'gauge',
-      progress: {
-        show: true,
-        width: 18
-      },
-      axisLine: {
-        lineStyle: {
-          width: 18
-        }
-      },
-      axisTick: {
-        show: false
-      },
-      splitLine: {
-        length: 15,
-        lineStyle: {
-          width: 2,
-          color: '#999'
-        }
-      },
-      axisLabel: {
-        distance: 25,
-        color: '#999',
-        fontSize: 8
-      },
-      anchor: {
-        show: true,
-        showAbove: true,
-        size: 25,
-        itemStyle: {
-          borderWidth: 10
-        }
-      },
-      title: {
-        show: false
-      },
-      detail: {
-        valueAnimation: true,
-        fontSize: 20,
-        offsetCenter: [0, '70%']
-      },
-      data: [
-        {
-          value: 70
-        }
-      ]
-    }
-  ]
-};
-
-    if (option && typeof option === 'object') {
-      myChart.setOption(option);
-    }
-
-    window.addEventListener('resize', myChart.resize);
-  </script>
-  
-  <script type="text/javascript">
-    var dom = document.getElementById('chart2');
-    var myChart = echarts.init(dom, null, {
-      renderer: 'canvas',
-      useDirtyRect: false
-    });
-    var app = {};
-    
-    var option;
-
-    option = {
-  graphic: {
-    elements: [
-      {
-        type: 'text',
-        left: 'center',
-        top: 'center',
-        style: {
-          text: 'Apache ECharts',
-          fontSize: 50,
-          fontWeight: 'bold',
-          lineDash: [0, 200],
-          lineDashOffset: 0,
-          fill: 'transparent',
-          stroke: '#000',
-          lineWidth: 1
-        },
-        keyframeAnimation: {
-          duration: 3000,
-          loop: true,
-          keyframes: [
-            {
-              percent: 0.7,
-              style: {
-                fill: 'transparent',
-                lineDashOffset: 200,
-                lineDash: [200, 0]
-              }
-            },
-            {
-              // Stop for a while.
-              percent: 0.8,
-              style: {
-                fill: 'transparent'
-              }
-            },
-            {
-              percent: 1,
-              style: {
-                fill: 'black'
-              }
-            }
-          ]
-        }
-      }
-    ]
-  }
-};
-
-    if (option && typeof option === 'object') {
-      myChart.setOption(option);
-    }
-
-    window.addEventListener('resize', myChart.resize);
-  </script>
-
-<script type="text/javascript">
-    var dom = document.getElementById('chart3');
-    var myChart = echarts.init(dom, null, {
-      renderer: 'canvas',
-      useDirtyRect: false
-    });
-    var app = {};
-    
-    var option;
-
-    option = {
-  title: {
-    text: 'Distribution of Electricity',
-    subtext: 'Fake Data'
-  },
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {
-      type: 'cross'
-    }
-  },
-  toolbox: {
-    show: true,
-    feature: {
-      saveAsImage: {}
-    }
-  },
-  xAxis: {
-    type: 'category',
-    boundaryGap: false,
-    // prettier-ignore
-    data: ['00:00', '01:15', '02:30', '03:45', '05:00', '06:15', '07:30', '08:45', '10:00', '11:15', '12:30', '13:45', '15:00', '16:15', '17:30', '18:45', '20:00', '21:15', '22:30', '23:45']
-  },
-  yAxis: {
-    type: 'value',
-    axisLabel: {
-      formatter: '{value} W'
-    },
-    axisPointer: {
-      snap: true
-    }
-  },
-  visualMap: {
-    show: false,
-    dimension: 0,
-    pieces: [
-      {
-        lte: 6,
-        color: 'green'
-      },
-      {
-        gt: 6,
-        lte: 8,
-        color: 'red'
-      },
-      {
-        gt: 8,
-        lte: 14,
-        color: 'green'
-      },
-      {
-        gt: 14,
-        lte: 17,
-        color: 'red'
-      },
-      {
-        gt: 17,
-        color: 'green'
-      }
-    ]
-  },
-  series: [
-    {
-      name: 'Electricity',
-      type: 'line',
-      smooth: true,
-      // prettier-ignore
-      data: [300, 280, 250, 260, 270, 300, 550, 500, 400, 390, 380, 390, 400, 500, 600, 750, 800, 700, 600, 400],
-      markArea: {
-        itemStyle: {
-          color: 'rgba(255, 173, 177, 0.4)'
-        },
-        data: [
-          [
-            {
-              name: 'Morning Peak',
-              xAxis: '07:30'
-            },
-            {
-              xAxis: '10:00'
-            }
-          ],
-          [
-            {
-              name: 'Evening Peak',
-              xAxis: '17:30'
-            },
-            {
-              xAxis: '21:15'
-            }
-          ]
-        ]
-      }
-    }
-  ]
-};
-
-    if (option && typeof option === 'object') {
-      myChart.setOption(option);
-    }
-
-    window.addEventListener('resize', myChart.resize);
-  </script>
+  <div class="rightwidget">
+    <div class="process_list_container" id="Container_2">进程列表</div>
+  </div>
 
 </body>
 
