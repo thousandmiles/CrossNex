@@ -48,15 +48,16 @@ NavigationTree::NavigationTree(QWidget *parent):
     instanceConfigFile = configFilePath + "/CrossNexII.txt";
     folderConfigFile = configFilePath + "/CrossNexFF.txt";
 
+    connect(this, &NavigationTree::folderCreated, this, &NavigationTree::handleFolderCreated);
+    connect(this, &NavigationTree::instanceCreated, this, &NavigationTree::handleInstanceCreated);
+
     createConfigFile();
     reloadTreeFromConfig();
 
     connect(this, &NavigationTree::itemClicked, this, &NavigationTree::handleNodeClicked);
     connect(this, &NavigationTree::customContextMenuRequested, this, &NavigationTree::showContextMenu);
     connect(this, &NavigationTree::instanceNameChanged, this, &NavigationTree::handleInstanceNameChanged);
-    connect(this, &NavigationTree::instanceCreated, this, &NavigationTree::handleInstanceCreated);
     connect(this, &NavigationTree::folderNameChanged, this, &NavigationTree::handleFolderNameChanged);
-    connect(this, &NavigationTree::folderCreated, this, &NavigationTree::handleFolderCreated);
     connect(this, &NavigationTree::instanceDeleted, this, &NavigationTree::handleInstanceDeleted);
     connect(this, &NavigationTree::folderDeleted, this, &NavigationTree::handleFolderDeleted);
     connect(this, &NavigationTree::writeConfig, this, &NavigationTree::writeConfigToFile);
@@ -432,6 +433,8 @@ void NavigationTree::handleFolderNameChanged(const QString &previous, const QStr
 
 void NavigationTree::handleFolderCreated(const Folder_Node_Config &config, const QString &folderName)
 {
+
+    qDebug()<<"received folder created: "<<folderName;
     folderName_path.insert(folderName, config.Path);
 
     emit writeConfig();
@@ -464,9 +467,9 @@ void NavigationTree::addFolder(const QString &folderName)
     config.Path = getNodePath(folderItem);
     config.Type = "folder";
 
-    qDebug()<<"config.Path: "<<config.Path;
-
     emit folderCreated(config, folderName);
+
+    qDebug()<<"config.Path: "<<config.Path;
 }
 
 void NavigationTree::addInstance(const QString &instanceName, const QString &ipAddress, const QString &createTime)
@@ -750,6 +753,8 @@ void NavigationTree::reloadFolderConfig(const QString &folderCfg)
 
         file.close();
         qDebug() << "folderCfg reading and parsing completed.";
+        qDebug()<<folderSet;
+        qDebug()<<folderName_path;
     }
     else
     {
@@ -811,7 +816,6 @@ void NavigationTree::createFolderFromConfig(const QStringList &folderList)
 {
     QString currentFolderName;
     QString parentFolderName;
-    folderSet.clear();
 
     for (int i = 0; i < folderList.size(); ++i)
     {
@@ -823,25 +827,40 @@ void NavigationTree::createFolderFromConfig(const QStringList &folderList)
             continue;
         }
 
-        if (folderSet.contains(parentFolderName))
+        if (folderSet.contains(currentFolderName))
         {
+            qDebug()<<"folderSet.contains: "<<currentFolderName;
             QTreeWidgetItemIterator it(this);
             while (*it)
             {
                 QTreeWidgetItem *item = *it;
-                if (item->text(0) == parentFolderName)
+                if (item->text(0) == currentFolderName)
                 {
                     currentNode = item;
-                    break;
                 }
 
                 ++it;
             }
+
+            continue;
         }
 
         folderSet.insert(currentFolderName);
         addFolder(currentFolderName);
         parentFolderName = currentFolderName;
+
+        QTreeWidgetItemIterator itcurr(this);
+        while (*itcurr)
+        {
+            QTreeWidgetItem *item = *itcurr;
+            if (item->text(0) == currentFolderName)
+            {
+                currentNode = item;
+                break;
+            }
+
+            ++itcurr;
+        }
     }
 }
 

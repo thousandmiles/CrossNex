@@ -81,6 +81,7 @@ private:
     QHash<QString, QString> folderName_path;
 
     bool isParentFolderNameUsed;
+    bool isTreeLoaded;
 
 private:
     void addFolder(const QString &folderName);
