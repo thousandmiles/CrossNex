@@ -98,7 +98,7 @@ private:
     void reloadFolderConfig(const QString &folderCfg);
     void reloadInstanceConfig(const QString &instanceCfg);
     void createFolderFromConfig(const QStringList &folderList);
-    void createINstanceFromConfig(const QString &instance,
+    void createInstanceFromConfig(const QString &instance,
                                   const QString &parent,
                                   const QString &ip,
                                   const QString &date);
