@@ -10,7 +10,9 @@ class TabContainer : public QTabWidget
 public:
     TabContainer(QWidget *parent = nullptr);
 
-    void addTab(const QString& nodeName, const QString& url);
+    void addTab(const QString& nodeName, const QString& ipAddress);
+
+    void addHelloPage();
 public slots:
     void createNewTab(const QString &nodeName, const QString& ipAddress);
 };
