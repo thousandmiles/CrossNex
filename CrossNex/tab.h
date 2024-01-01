@@ -13,23 +13,25 @@
 class WebTransport : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QJsonObject CPUJsonData MEMBER CPUJsonData NOTIFY dataChanged)
+    Q_PROPERTY(QJsonObject CPUJsonData MEMBER CPUJsonData NOTIFY CPUJsonDataChanged)
+    Q_PROPERTY(QJsonObject MemoryJsonData MEMBER MemoryJsonData NOTIFY MemoryJsonDataChanged)
 
 public:
     explicit WebTransport (QWebEnginePage *page, QObject *parent = nullptr)
         : QObject(parent), webPage(page) {}
 
 public slots:
-    void sendCPUDataToJavaScript(const QJsonObject &data) {
-        // 将数据从Qt传递到JavaScript
-        setProperty("CPUJsonData", data);
-    }
+    void sendCPUDataToJavaScript(const QJsonObject &data);
+    void sendMemoryDataToJavaScript(const QJsonObject &data);
+
 signals:
-    void dataChanged(const QJsonObject &CPUJsonData);
+    void CPUJsonDataChanged(const QJsonObject &CPUJsonData);
+    void MemoryJsonDataChanged(const QJsonObject &CPUJsonData);
 
 private:
     QWebEnginePage *webPage;
     QJsonObject CPUJsonData;
+    QJsonObject MemoryJsonData;
 };
 
 
@@ -64,12 +66,12 @@ public slots:
 
 private slots:
     void updateCPUData(const QByteArray &data);
-    void updateCPUTime(const QByteArray &data);
-    void updateProcessTimePid(const QByteArray &data);
-    void updateDiskList(const QByteArray &data);
-    void updateProcessMemoryPid(const QByteArray &data);
+    // void updateCPUTime(const QByteArray &data);
+    // void updateProcessTimePid(const QByteArray &data);
+    // void updateDiskList(const QByteArray &data);
+    // void updateProcessMemoryPid(const QByteArray &data);
     void updateMachineMemory(const QByteArray &data);
-    void updateProcessInfo(const QByteArray &data);
+    // void updateProcessInfo(const QByteArray &data);
 
     void handleError(const QString &error);
 
