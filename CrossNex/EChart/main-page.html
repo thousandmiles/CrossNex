@@ -59,12 +59,16 @@
 
     .cpu_container {
       flex: 1;
-      background-color: rgb(152, 201, 218);
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
     }
 
     .memory_container {
       flex: 1;
-      background-color: rgb(158, 22, 102);
+      background-color: #f0f0f0;
     }
 
     .process_list_container {
@@ -77,6 +81,91 @@
       justify-content: space-around;
       ;
     }
+
+    /*——————————————————————Card Style——————————————————————*/
+    .card {
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      animation: scaleUp 0.5s ease-out;
+      margin: 10px auto;
+      /* 居中显示 */
+      max-width: 300px;
+      /* 设置卡片最大宽度 */
+      display: flex;
+      flex-direction: column;
+      /* 将子元素放在一列中 */
+    }
+
+    /*——————————————————————CPU Style——————————————————————*/
+
+    .cpu.metric.upper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      /* 在行中均匀分布元素 */
+      align-items: center;
+      /* 在行中垂直居中元素 */
+      margin-bottom: 10px;
+      /* 去除下部分 metric 的底部间距 */
+    }
+
+    .cpu.metric.upper span {
+      display: block;
+      font-size: 10px;
+      color: #c6e30d;
+    }
+
+    /* 新增样式，使下部分的 metric 水平排列 */
+    .cpu.metric.bottom {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      /* 在行中均匀分布元素 */
+      align-items: center;
+      /* 在行中垂直居中元素 */
+      margin-bottom: 0;
+      /* 去除下部分 metric 的底部间距 */
+    }
+
+    .cpu.metric.bottom label {
+      font-weight: bold;
+      font-size: 10px;
+    }
+
+    .cpu.metric.bottom span {
+      display: block;
+      font-size: 17px;
+      color: #e7c20cf3;
+    }
+
+    /*——————————————————————Memory Style——————————————————————*/
+
+    .memory.metric {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      /* 在行中均匀分布元素 */
+      align-items: center;
+      /* 在行中垂直居中元素 */
+      margin-bottom: 0;
+      /* 去除下部分 metric 的底部间距 */
+    }
+
+    .memory.metric label {
+      font-weight: bold;
+      font-size: 10px;
+    }
+
+    .memory.metric span {
+      display: block;
+      font-size: 17px;
+      color: #e7c20cf3;
+    }
+
+    /*——————————————————————————————————————————————————————*/
   </style>
 </head>
 
@@ -85,8 +174,50 @@
 
     <div class="lefttop">
       <div class="lefttop_left">
-        <div class="cpu_container" id="cpu_container">CPU信息</div>
-        <div class="memory_container">内存信息</div>
+        <div class="cpu_container" id="cpu_container">
+          <div class="card">
+            <div class="cpu metric upper">
+              <span id="cpu_name"></span>
+            </div>
+            <div class="cpu metric bottom">
+              <label>CPU mhz:</label>
+              <span id="cpu_mhz"></span>
+            </div>
+            <div class="cpu metric bottom">
+              <label>Cache size:</label>
+              <span id="cache_size"></span>
+            </div>
+            <div class="cpu metric bottom">
+              <label>Core num:</label>
+              <span id="core_num"></span>
+            </div>
+          </div>
+
+        </div>
+        <div class="memory_container">
+          <div class="card">
+            <div class="memory metric">
+              <label>Total memory:</label>
+              <span id="total_memory"></span>
+            </div>
+            <div class="memory metric">
+              <label>Available memory:</label>
+              <span id="available_memory"></span>
+            </div>
+            <div class="memory metric">
+              <label>Free memory:</label>
+              <span id="free_memory"></span>
+            </div>
+            <div class="memory metric">
+              <label>Buffers:</label>
+              <span id="buffers"></span>
+            </div>
+            <div class="memory metric">
+              <label>Cached:</label>
+              <span id="cached"></span>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="disk_container">磁盘信息</div>
     </div>
@@ -101,9 +232,19 @@
     document.addEventListener("DOMContentLoaded", function () {
       new QWebChannel(qt.webChannelTransport, function (channel) {
         var webTransport = channel.objects.webTransport;
-        webTransport.dataChanged.connect(function (arg) {
-          var cpuContainer = document.getElementById('cpu_container');
-          cpuContainer.innerHTML = arg.cache_size;
+        webTransport.CPUJsonDataChanged.connect(function (arg) {
+          document.getElementById('cpu_name').innerHTML = arg.model_name;
+          document.getElementById('cpu_mhz').innerHTML = arg.cpu_mhz;
+          document.getElementById('cache_size').innerHTML = arg.cache_size;
+          document.getElementById('core_num').innerHTML = arg.core_num;
+        });
+
+        webTransport.MemoryJsonDataChanged.connect(function (arg) {
+          document.getElementById('available_memory').innerHTML = arg.available_memory;
+          document.getElementById('buffers').innerHTML = arg.buffers;
+          document.getElementById('cached').innerHTML = arg.cached;
+          document.getElementById('free_memory').innerHTML = arg.free_memory;
+          document.getElementById('total_memory').innerHTML = arg.total_memory;
         });
       });
     });
