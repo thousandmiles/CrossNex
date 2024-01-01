@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script type="text/javascript" src="./echarts.js"></script>
+  <script src="qwebchannel.js"></script>
   <title>Demo</title>
   <style>
     html,
@@ -36,15 +36,9 @@
       flex: 1;
       display: flex;
       flex-direction: row;
-      background-color: rgb(188, 173, 230);
     }
 
-    .memory_trend_container {
-      flex: 1;
-      background-color: rgb(238, 205, 144);
-    }
 
-    /*-------------------------------------*/
     .lefttop_left {
       flex: 2;
       display: flex;
@@ -57,10 +51,12 @@
       background-color: rgb(65, 70, 63);
     }
 
-    /*-------------------------------------*/
 
+    .memory_trend_container {
+      flex: 1;
+      background-color: rgb(238, 205, 144);
+    }
 
-    /*-------------------------------------*/
     .cpu_container {
       flex: 1;
       background-color: rgb(152, 201, 218);
@@ -69,20 +65,6 @@
     .memory_container {
       flex: 1;
       background-color: rgb(158, 22, 102);
-    }
-
-    /*-------------------------------------*/
-
-
-    .module_1 {
-      flex: 1;
-      align-items: center;
-      margin: 0;
-      text-align: center;
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
-      ;
     }
 
     .process_list_container {
@@ -99,22 +81,33 @@
 </head>
 
 <body>
-
   <div class="leftwidget">
 
     <div class="lefttop">
       <div class="lefttop_left">
-        <div class="cpu_container">CPU信息</div>
+        <div class="cpu_container" id="cpu_container">CPU信息</div>
         <div class="memory_container">内存信息</div>
       </div>
       <div class="disk_container">磁盘信息</div>
     </div>
     <div class="memory_trend_container">内存趋势变化</div>
   </div>
-
   <div class="rightwidget">
-    <div class="process_list_container" id="Container_2">进程列表</div>
+    <div class="process_list_container">进程列表</div>
   </div>
+
+  <script src="qwebchannel.js"></script>
+  <script type="text/javascript">
+    document.addEventListener("DOMContentLoaded", function () {
+      new QWebChannel(qt.webChannelTransport, function (channel) {
+        var webTransport = channel.objects.webTransport;
+        webTransport.dataChanged.connect(function (arg) {
+          var cpuContainer = document.getElementById('cpu_container');
+          cpuContainer.innerHTML = arg.cache_size;
+        });
+      });
+    });
+  </script>
 
 </body>
 
