@@ -22,7 +22,7 @@ DataService::~DataService()
 
 void DataService::FetchData(int controlIdentifier, int pid)
 {
-    QString url = URLPATH;
+    QString url = getURLPATH();
 
     switch (controlIdentifier) {
     case ID_CPU_Info:
@@ -108,25 +108,25 @@ void DataService::HandleWebServiceData(const QByteArray &data, int controlIdenti
 {
     switch (controlIdentifier) {
     case ID_CPU_Info:
-        emit control_1_DataReady(data);
+        emit control_CPU_Info_DataReady(data);
         break;
     case ID_CPU_Time:
-        emit control_2_DataReady(data);
+        emit control_CPU_Time_DataReady(data);
         break;
     case ID_Process_Time_pid:
-        emit control_3_DataReady(data);
+        emit control_Process_Time_pid_DataReady(data);
         break;
     case ID_Disk_List:
-        emit control_3_DataReady(data);
+        emit control_Disk_List_DataReady(data);
         break;
     case ID_Process_Memory_pid:
-        emit control_3_DataReady(data);
+        emit control_Process_Memory_pid_DataReady(data);
         break;
     case ID_Machine_Memory:
-        emit control_3_DataReady(data);
+        emit control_Machine_Memory_DataReady(data);
         break;
     case ID_Process_Info:
-        emit control_3_DataReady(data);
+        emit control_Process_Info_DataReady(data);
         break;
     default:
         qDebug() << "Unknown ID";
