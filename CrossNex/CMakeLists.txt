@@ -23,8 +23,6 @@ set(PROJECT_SOURCES
         dataservice.cpp
         webservice.h
         webservice.cpp
-        testcontrol.h
-        testcontrol.cpp
         mainwindow.h
         mainwindow.cpp
         navigationtree.h
