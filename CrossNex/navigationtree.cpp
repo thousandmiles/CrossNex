@@ -1,5 +1,5 @@
 #include "navigationtree.h"
-#include "navigationtree.moc"
+//#include "navigationtree.moc"
 #include "newinstancedialog.h"
 #include <QInputDialog>
 #include <QMessageBox>
