@@ -197,23 +197,23 @@
         <div class="memory_container">
           <div class="card">
             <div class="memory metric">
-              <label>Total memory:</label>
+              <label>Total memory(GB):</label>
               <span id="total_memory"></span>
             </div>
             <div class="memory metric">
-              <label>Available memory:</label>
+              <label>Available memory(GB):</label>
               <span id="available_memory"></span>
             </div>
             <div class="memory metric">
-              <label>Free memory:</label>
+              <label>Free memory(GB):</label>
               <span id="free_memory"></span>
             </div>
             <div class="memory metric">
-              <label>Buffers:</label>
+              <label>Buffers(MB):</label>
               <span id="buffers"></span>
             </div>
             <div class="memory metric">
-              <label>Cached:</label>
+              <label>Cached(MB):</label>
               <span id="cached"></span>
             </div>
           </div>
@@ -240,11 +240,11 @@
         });
 
         webTransport.MemoryJsonDataChanged.connect(function (arg) {
-          document.getElementById('available_memory').innerHTML = arg.available_memory;
-          document.getElementById('buffers').innerHTML = arg.buffers;
-          document.getElementById('cached').innerHTML = arg.cached;
-          document.getElementById('free_memory').innerHTML = arg.free_memory;
-          document.getElementById('total_memory').innerHTML = arg.total_memory;
+          document.getElementById('available_memory').innerHTML = (arg.available_memory / (1024 * 1024)).toFixed(2);
+          document.getElementById('buffers').innerHTML = (arg.buffers / 1024).toFixed(2);
+          document.getElementById('cached').innerHTML = (arg.cached / 1024).toFixed(2);
+          document.getElementById('free_memory').innerHTML = (arg.free_memory / (1024 * 1024)).toFixed(2);
+          document.getElementById('total_memory').innerHTML = (arg.total_memory / (1024 * 1024)).toFixed(2);
         });
       });
     });
