@@ -15,23 +15,29 @@ class WebTransport : public QObject
     Q_OBJECT
     Q_PROPERTY(QJsonObject CPUJsonData MEMBER CPUJsonData NOTIFY CPUJsonDataChanged)
     Q_PROPERTY(QJsonObject MemoryJsonData MEMBER MemoryJsonData NOTIFY MemoryJsonDataChanged)
+    Q_PROPERTY(QJsonObject DiskJsonData MEMBER DiskJsonData NOTIFY DiskJsonDataChanged)
 
 public:
     explicit WebTransport (QWebEnginePage *page, QObject *parent = nullptr)
         : QObject(parent), webPage(page) {}
+    qint64 GetDiskSize(const QString& diskInfo);
 
 public slots:
     void sendCPUDataToJavaScript(const QJsonObject &data);
     void sendMemoryDataToJavaScript(const QJsonObject &data);
+    void sendDiskDataToJavaScript(const QJsonObject &data);
 
 signals:
-    void CPUJsonDataChanged(const QJsonObject &CPUJsonData);
-    void MemoryJsonDataChanged(const QJsonObject &CPUJsonData);
+    void CPUJsonDataChanged(const QJsonObject &JsonData);
+    void MemoryJsonDataChanged(const QJsonObject &JsonData);
+    void DiskJsonDataChanged(const QJsonObject &JsonData);
+    void DiskUsedPercentIsObtained(const int& usedValue);
 
 private:
     QWebEnginePage *webPage;
     QJsonObject CPUJsonData;
     QJsonObject MemoryJsonData;
+    QJsonObject DiskJsonData;
 };
 
 
@@ -68,7 +74,7 @@ private slots:
     void updateCPUData(const QByteArray &data);
     // void updateCPUTime(const QByteArray &data);
     // void updateProcessTimePid(const QByteArray &data);
-    // void updateDiskList(const QByteArray &data);
+    void updateDiskList(const QByteArray &data);
     // void updateProcessMemoryPid(const QByteArray &data);
     void updateMachineMemory(const QByteArray &data);
     // void updateProcessInfo(const QByteArray &data);

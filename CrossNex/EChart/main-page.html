@@ -219,7 +219,7 @@
           </div>
         </div>
       </div>
-      <div class="disk_container">磁盘信息</div>
+      <div class="disk_container" id="disk_container"></div>
     </div>
     <div class="memory_trend_container">内存趋势变化</div>
   </div>
@@ -246,10 +246,14 @@
           document.getElementById('free_memory').innerHTML = (arg.free_memory / (1024 * 1024)).toFixed(2);
           document.getElementById('total_memory').innerHTML = (arg.total_memory / (1024 * 1024)).toFixed(2);
         });
+
+        webTransport.DiskUsedPercentIsObtained.connect(function (arg) {
+          document.getElementById('disk_container').innerHTML = arg;
+        });
+
       });
     });
   </script>
-
 </body>
 
 </html>
