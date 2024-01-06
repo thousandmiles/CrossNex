@@ -30,7 +30,7 @@ Tab::Tab(const QString& ip, QWidget *parent)
     connect(dataService, &DataService::control_Disk_List_DataReady, this, &Tab::updateDiskList);
     // connect(dataService, &DataService::control_Process_Memory_pid_DataReady, this, &Tab::updateProcessMemoryPid);
     connect(dataService, &DataService::control_Machine_Memory_DataReady, this, &Tab::updateMachineMemory);
-    // connect(dataService, &DataService::control_Process_Info_DataReady, this, &Tab::updateProcessInfo);
+    connect(dataService, &DataService::control_Process_Info_DataReady, this, &Tab::updateProcessInfo);
 
     connect(dataService, &DataService::errorOccurred, this, &Tab::handleError);
 
@@ -68,8 +68,6 @@ void Tab::updateCPUData(const QByteArray &data)
     if (!jsonDoc.isNull() && jsonDoc.isObject())
     {
         QJsonObject cpuJson = jsonDoc.object();
-
-        qDebug()<<"cpuJson: "<< cpuJson;
         webTransport->sendCPUDataToJavaScript(cpuJson);
     }
 }
@@ -80,8 +78,6 @@ void Tab::updateDiskList(const QByteArray &data)
     if (!jsonDoc.isNull() && jsonDoc.isObject())
     {
         QJsonObject jsonObj = jsonDoc.object();
-
-        qDebug()<<"diskJson: "<< jsonObj;
         webTransport->sendDiskDataToJavaScript(jsonObj);
     }
 }
@@ -92,9 +88,19 @@ void Tab::updateMachineMemory(const QByteArray &data)
     if (!jsonDoc.isNull() && jsonDoc.isObject())
     {
         QJsonObject memoryJson = jsonDoc.object();
-
-        qDebug()<<"memoryJson: "<< memoryJson;
         webTransport->sendMemoryDataToJavaScript(memoryJson);
+    }
+}
+
+void Tab::updateProcessInfo(const QByteArray &data)
+{
+    QJsonDocument jsonDoc = QJsonDocument::fromJson(data);
+    if (!jsonDoc.isNull() && jsonDoc.isObject())
+    {
+        QJsonObject processJson = jsonDoc.object();
+
+        qDebug()<<"processJson: "<< processJson;
+        webTransport->sendProcessDataToJavaScript(processJson);
     }
 }
 
@@ -110,6 +116,7 @@ void Tab::fetchData() {
     dataService->FetchData(ID_CPU_Info);
     dataService->FetchData(ID_Machine_Memory);
     dataService->FetchData(ID_Disk_List);
+    dataService->FetchData(ID_Process_Info);
     timer.stop();
 }
 
@@ -170,4 +177,9 @@ void WebTransport::sendDiskDataToJavaScript(const QJsonObject &data)
 
         emit DiskUsedPercentIsObtained(used_percent);
     }
+}
+
+void WebTransport::sendProcessDataToJavaScript(const QJsonObject &data)
+{
+    setProperty("ProcessJsonData", data);
 }

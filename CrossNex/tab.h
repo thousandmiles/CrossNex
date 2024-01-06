@@ -16,6 +16,7 @@ class WebTransport : public QObject
     Q_PROPERTY(QJsonObject CPUJsonData MEMBER CPUJsonData NOTIFY CPUJsonDataChanged)
     Q_PROPERTY(QJsonObject MemoryJsonData MEMBER MemoryJsonData NOTIFY MemoryJsonDataChanged)
     Q_PROPERTY(QJsonObject DiskJsonData MEMBER DiskJsonData NOTIFY DiskJsonDataChanged)
+    Q_PROPERTY(QJsonObject ProcessJsonData MEMBER ProcessJsonData NOTIFY ProcessJsonDataChanged)
 
 public:
     explicit WebTransport (QWebEnginePage *page, QObject *parent = nullptr)
@@ -26,18 +27,21 @@ public slots:
     void sendCPUDataToJavaScript(const QJsonObject &data);
     void sendMemoryDataToJavaScript(const QJsonObject &data);
     void sendDiskDataToJavaScript(const QJsonObject &data);
+    void sendProcessDataToJavaScript(const QJsonObject &data);
 
 signals:
     void CPUJsonDataChanged(const QJsonObject &JsonData);
     void MemoryJsonDataChanged(const QJsonObject &JsonData);
     void DiskJsonDataChanged(const QJsonObject &JsonData);
     void DiskUsedPercentIsObtained(const int& usedValue);
+    void ProcessJsonDataChanged(const QJsonObject &JsonData);
 
 private:
     QWebEnginePage *webPage;
     QJsonObject CPUJsonData;
     QJsonObject MemoryJsonData;
     QJsonObject DiskJsonData;
+    QJsonObject ProcessJsonData;
 };
 
 
@@ -77,7 +81,7 @@ private slots:
     void updateDiskList(const QByteArray &data);
     // void updateProcessMemoryPid(const QByteArray &data);
     void updateMachineMemory(const QByteArray &data);
-    // void updateProcessInfo(const QByteArray &data);
+    void updateProcessInfo(const QByteArray &data);
 
     void handleError(const QString &error);
 
