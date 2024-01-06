@@ -4,7 +4,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="qwebchannel.js"></script>
+  <script type="text/javascript" src="qwebchannel.js"></script>
+  <script type="text/javascript" src="echarts.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+  <script type="text/javascript" charset="utf8"
+    src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script>
+
   <title>Demo</title>
   <style>
     html,
@@ -43,12 +50,12 @@
       flex: 2;
       display: flex;
       flex-direction: column;
-      background-color: rgb(10, 171, 224);
     }
 
     .disk_container {
       flex: 3;
-      background-color: rgb(65, 70, 63);
+      overflow: auto;
+      /* background-color: rgb(65, 70, 63); */
     }
 
 
@@ -63,12 +70,18 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      background-color: #f0f0f0;
+      width: 100%;
+      height: 100%;
     }
 
     .memory_container {
       flex: 1;
-      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 100%;
     }
 
     .process_list_container {
@@ -79,15 +92,20 @@
       display: flex;
       align-items: center;
       justify-content: space-around;
-      ;
+      flex-direction: column;
+    }
+
+    .process_table_container {
+      width: 100%;
+      height: 100%;
+      overflow: auto;
     }
 
     /*——————————————————————Card Style——————————————————————*/
     .card {
-      background-color: rgba(0, 0, 0, 0.5);
-      border-radius: 10px;
+      width: 100%;
+      height: 100%;
       padding: 20px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
       text-align: center;
       animation: scaleUp 0.5s ease-out;
       margin: 10px auto;
@@ -114,8 +132,8 @@
 
     .cpu.metric.upper span {
       display: block;
-      font-size: 10px;
-      color: #c6e30d;
+      font-size: 20px;
+      color: rgb(59, 12, 230);
     }
 
     /* 新增样式，使下部分的 metric 水平排列 */
@@ -138,7 +156,7 @@
     .cpu.metric.bottom span {
       display: block;
       font-size: 17px;
-      color: #e7c20cf3;
+      color: #e70c76f3;
     }
 
     /*——————————————————————Memory Style——————————————————————*/
@@ -219,19 +237,140 @@
           </div>
         </div>
       </div>
-      <div class="disk_container" id="disk_container"></div>
+      <div class="disk_container" id="disk_container">
+      </div>
     </div>
     <div class="memory_trend_container">内存趋势变化</div>
   </div>
   <div class="rightwidget">
-    <div class="process_list_container">进程列表</div>
+    <div class="process_list_container">
+      <div class="process_table_container">
+        <table id="processTable" class="display">
+          <thead>
+            <!-- 表头将在 JavaScript 中动态填充 -->
+          </thead>
+          <tbody>
+            <!-- 表格内容将在 JavaScript 中动态填充 -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
-  <script src="qwebchannel.js"></script>
+
   <script type="text/javascript">
+    var dom = document.getElementById('disk_container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+
+    option = {
+      series: [
+        {
+          type: 'gauge',
+          axisLine: {
+            lineStyle: {
+              width: 30,
+              color: [
+                [0.3, '#67e0e3'],
+                [0.7, '#37a2da'],
+                [1, '#fd666d']
+              ]
+            }
+          },
+          pointer: {
+            itemStyle: {
+              color: 'auto'
+            }
+          },
+          axisTick: {
+            distance: -30,
+            length: 8,
+            lineStyle: {
+              color: '#fff',
+              width: 2
+            }
+          },
+          splitLine: {
+            distance: -30,
+            length: 30,
+            lineStyle: {
+              color: '#fff',
+              width: 4
+            }
+          },
+          axisLabel: {
+            color: 'inherit',
+            distance: 40,
+            fontSize: 15
+          },
+          detail: {
+            valueAnimation: true,
+            formatter: '{value} %',
+            color: 'inherit'
+          },
+        }
+      ]
+    };
+
+    function updateTable(data) {
+      // 清空表格内容
+      $('#processTable tbody').empty();
+
+      // 动态生成表头
+      var headers = Object.keys(data[0]);
+      var theadRow = '<tr>';
+      headers.forEach(function (header) {
+        theadRow += '<th>' + header.toUpperCase() + '</th>';
+      });
+      theadRow += '</tr>';
+      $('#processTable thead').html(theadRow);
+
+      // 动态生成表格内容
+      data.forEach(function (item) {
+        var tr = '<tr>';
+        headers.forEach(function (header) {
+          tr += '<td>' + item[header] + '</td>';
+        });
+        tr += '</tr>';
+        $('#processTable tbody').append(tr);
+      });
+
+      // 初始化 DataTables 插件，禁用自动列宽
+      var dataTable = $('#processTable').DataTable({
+        paging: false,          // 禁用分页
+        scrollY: '100%',        // 设置滚动区域的高度为 100%（表格高度占据父容器的百分之百）
+        scrollCollapse: true,   // 当内容不足时，允许滚动区域折叠
+        autoWidth: false         // 禁用自动调整列宽
+      });
+
+      // 手动设置列宽度
+      dataTable.columns().every(function () {
+        this.width('auto');
+      });
+
+
+    }
+
     document.addEventListener("DOMContentLoaded", function () {
       new QWebChannel(qt.webChannelTransport, function (channel) {
         var webTransport = channel.objects.webTransport;
+        webTransport.DiskUsedPercentIsObtained.connect(function (arg) {
+          var newData = {
+            series: [
+              {
+                data: [
+                  {
+                    value: arg  // 使用传递的值
+                  }
+                ]
+              }
+            ]
+          };
+          myChart.setOption(newData);
+        });
+
         webTransport.CPUJsonDataChanged.connect(function (arg) {
           document.getElementById('cpu_name').innerHTML = arg.model_name;
           document.getElementById('cpu_mhz').innerHTML = arg.cpu_mhz;
@@ -247,13 +386,25 @@
           document.getElementById('total_memory').innerHTML = (arg.total_memory / (1024 * 1024)).toFixed(2);
         });
 
-        webTransport.DiskUsedPercentIsObtained.connect(function (arg) {
-          document.getElementById('disk_container').innerHTML = arg;
+        webTransport.ProcessJsonDataChanged.connect(function (arg) {
+          if (arg && arg.process && Array.isArray(arg.process)) {
+            updateTable(arg.process);
+          } else {
+            console.error('Invalid or missing process data.');
+          }
         });
 
       });
     });
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
   </script>
+
+
 </body>
 
 </html>
