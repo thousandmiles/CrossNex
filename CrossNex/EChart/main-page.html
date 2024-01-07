@@ -47,41 +47,23 @@
 
 
     .lefttop_left {
-      flex: 2;
+      flex: 1;
       display: flex;
       flex-direction: column;
+      height: 100%;
+      width: 100%;
     }
 
     .disk_container {
       flex: 3;
-      overflow: auto;
+      width: 50%;
+      height: 50%;
       /* background-color: rgb(65, 70, 63); */
     }
-
 
     .memory_trend_container {
       flex: 1;
       background-color: rgb(238, 205, 144);
-    }
-
-    .cpu_container {
-      flex: 1;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 100%;
-    }
-
-    .memory_container {
-      flex: 1;
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      height: 100%;
     }
 
     .process_list_container {
@@ -101,89 +83,47 @@
       overflow: auto;
     }
 
-    /*——————————————————————Card Style——————————————————————*/
-    .card {
-      width: 100%;
-      height: 100%;
-      padding: 20px;
-      text-align: center;
-      animation: scaleUp 0.5s ease-out;
-      margin: 10px auto;
-      /* 居中显示 */
-      max-width: 300px;
-      /* 设置卡片最大宽度 */
+    .data-key {
+      display: inline-block;
+      width: 150px;
+      margin-bottom: 4px;
+      /* 调整宽度根据需要 */
+    }
+
+    .data-item {
+      margin-bottom: 10px;
+      /* 调整间距根据需要 */
+    }
+
+    .data-item::before {
+      content: '\2022';
+      /* Unicode 点号符号 */
+      margin-right: 5px;
+    }
+
+    .data-value {
+      font-weight: bold;
+      margin-left: 14px;
+      color: rgb(59, 12, 230);
+      /* 调整距离根据需要 */
+    }
+
+    .chart-container {
+      flex: 2;
       display: flex;
       flex-direction: column;
-      /* 将子元素放在一列中 */
+      height: 100%;
+      width: 100%;
+      justify-content: center;
+      /* 在水平方向上居中 */
+      /* 在垂直方向上居中 */
+      /* 调整总高度根据需要 */
     }
 
-    /*——————————————————————CPU Style——————————————————————*/
+    .chart {
+      flex: 1;
 
-    .cpu.metric.upper {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      /* 在行中均匀分布元素 */
-      align-items: center;
-      /* 在行中垂直居中元素 */
-      margin-bottom: 10px;
-      /* 去除下部分 metric 的底部间距 */
     }
-
-    .cpu.metric.upper span {
-      display: block;
-      font-size: 20px;
-      color: rgb(59, 12, 230);
-    }
-
-    /* 新增样式，使下部分的 metric 水平排列 */
-    .cpu.metric.bottom {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      /* 在行中均匀分布元素 */
-      align-items: center;
-      /* 在行中垂直居中元素 */
-      margin-bottom: 0;
-      /* 去除下部分 metric 的底部间距 */
-    }
-
-    .cpu.metric.bottom label {
-      font-weight: bold;
-      font-size: 10px;
-    }
-
-    .cpu.metric.bottom span {
-      display: block;
-      font-size: 17px;
-      color: #e70c76f3;
-    }
-
-    /*——————————————————————Memory Style——————————————————————*/
-
-    .memory.metric {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      /* 在行中均匀分布元素 */
-      align-items: center;
-      /* 在行中垂直居中元素 */
-      margin-bottom: 0;
-      /* 去除下部分 metric 的底部间距 */
-    }
-
-    .memory.metric label {
-      font-weight: bold;
-      font-size: 10px;
-    }
-
-    .memory.metric span {
-      display: block;
-      font-size: 17px;
-      color: #e7c20cf3;
-    }
-
-    /*——————————————————————————————————————————————————————*/
   </style>
 </head>
 
@@ -192,56 +132,55 @@
 
     <div class="lefttop">
       <div class="lefttop_left">
-        <div class="cpu_container" id="cpu_container">
-          <div class="card">
-            <div class="cpu metric upper">
-              <span id="cpu_name"></span>
-            </div>
-            <div class="cpu metric bottom">
-              <label>CPU mhz:</label>
-              <span id="cpu_mhz"></span>
-            </div>
-            <div class="cpu metric bottom">
-              <label>Cache size:</label>
-              <span id="cache_size"></span>
-            </div>
-            <div class="cpu metric bottom">
-              <label>Core num:</label>
-              <span id="core_num"></span>
-            </div>
+        <div id="data-container" style="width: 100%; height: 100%; overflow: auto;">
+          <div class="data-item">
+            <div class="data-key">Model Name:</div>
+            <div class="data-value" id="cpu_name"></div>
           </div>
+          <div class="data-item">
+            <div class="data-key">CPU MHz:</div>
+            <div class="data-value" id="cpu_mhz"></div>
+          </div>
+          <div class="data-item">
+            <div class="data-key">Cache Size:</div>
+            <div class="data-value" id="cache_size"></div>
+          </div>
+          <div class="data-item">
+            <div class="data-key">Core Num:</div>
+            <div class="data-value" id="core_num"></div>
+          </div>
+          <div class="data-item">
+            <div class="data-key">Available Memory:</div>
+            <div class="data-value" id="available_memory"></div>
+          </div>
+          <div class="data-item">
+            <div class="data-key">Buffers:</div>
+            <div class="data-value" id="buffers"></div>
+          </div>
+          <div class="data-item">
+            <div class="data-key">Cached:</div>
+            <div class="data-value" id="cached"></div>
+          </div>
+          <div class="data-item">
+            <div class="data-key">Free Memory:</div>
+            <div class="data-value" id="free_memory"></div>
+          </div>
+          <div class="data-item">
+            <div class="data-key">Total Memory:</div>
+            <div class="data-value" id="total_memory"></div>
+          </div>
+        </div>
 
-        </div>
-        <div class="memory_container">
-          <div class="card">
-            <div class="memory metric">
-              <label>Total memory(GB):</label>
-              <span id="total_memory"></span>
-            </div>
-            <div class="memory metric">
-              <label>Available memory(GB):</label>
-              <span id="available_memory"></span>
-            </div>
-            <div class="memory metric">
-              <label>Free memory(GB):</label>
-              <span id="free_memory"></span>
-            </div>
-            <div class="memory metric">
-              <label>Buffers(MB):</label>
-              <span id="buffers"></span>
-            </div>
-            <div class="memory metric">
-              <label>Cached(MB):</label>
-              <span id="cached"></span>
-            </div>
-          </div>
-        </div>
       </div>
-      <div class="disk_container" id="disk_container">
+      <div class="chart-container">
+        <div id="gauge_container_disk" class="chart"></div>
+        <div id="gauge_container_memory" class="chart"></div>
       </div>
     </div>
     <div class="memory_trend_container">内存趋势变化</div>
   </div>
+
+
   <div class="rightwidget">
     <div class="process_list_container">
       <div class="process_table_container">
@@ -259,8 +198,14 @@
 
 
   <script type="text/javascript">
-    var dom = document.getElementById('disk_container');
-    var myChart = echarts.init(dom, null, {
+    var dom1 = document.getElementById('gauge_container_disk');
+    var myChart1 = echarts.init(dom1, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+
+    var dom2 = document.getElementById('gauge_container_memory');
+    var myChart2 = echarts.init(dom2, null, {
       renderer: 'canvas',
       useDirtyRect: false
     });
@@ -271,7 +216,7 @@
           type: 'gauge',
           axisLine: {
             lineStyle: {
-              width: 30,
+              width: 12,
               color: [
                 [0.3, '#67e0e3'],
                 [0.7, '#37a2da'],
@@ -285,30 +230,31 @@
             }
           },
           axisTick: {
-            distance: -30,
-            length: 8,
+            distance: -6,
+            length: 6,
             lineStyle: {
               color: '#fff',
               width: 2
             }
           },
           splitLine: {
-            distance: -30,
-            length: 30,
+            distance: -12,
+            length: 20,
             lineStyle: {
               color: '#fff',
-              width: 4
+              width: 1
             }
           },
           axisLabel: {
             color: 'inherit',
-            distance: 40,
-            fontSize: 15
+            distance: 18,
+            fontSize: 8
           },
           detail: {
             valueAnimation: true,
             formatter: '{value} %',
-            color: 'inherit'
+            color: 'inherit',
+            fontSize: 10
           },
         }
       ]
@@ -342,7 +288,7 @@
         paging: false,          // 禁用分页
         scrollY: '100%',        // 设置滚动区域的高度为 100%（表格高度占据父容器的百分之百）
         scrollCollapse: true,   // 当内容不足时，允许滚动区域折叠
-        autoWidth: false         // 禁用自动调整列宽
+        autoWidth: false,         // 禁用自动调整列宽
       });
 
       // 手动设置列宽度
@@ -368,7 +314,7 @@
               }
             ]
           };
-          myChart.setOption(newData);
+          myChart1.setOption(newData);
         });
 
         webTransport.CPUJsonDataChanged.connect(function (arg) {
@@ -378,12 +324,18 @@
           document.getElementById('core_num').innerHTML = arg.core_num;
         });
 
+        function updateValue(elementId, value, unit) {
+          var element = document.getElementById(elementId);
+          element.innerHTML = value.toFixed(2) + ' ' + unit;
+        }
+
+        // 连接到 Memory 数据更新信号
         webTransport.MemoryJsonDataChanged.connect(function (arg) {
-          document.getElementById('available_memory').innerHTML = (arg.available_memory / (1024 * 1024)).toFixed(2);
-          document.getElementById('buffers').innerHTML = (arg.buffers / 1024).toFixed(2);
-          document.getElementById('cached').innerHTML = (arg.cached / 1024).toFixed(2);
-          document.getElementById('free_memory').innerHTML = (arg.free_memory / (1024 * 1024)).toFixed(2);
-          document.getElementById('total_memory').innerHTML = (arg.total_memory / (1024 * 1024)).toFixed(2);
+          updateValue('available_memory', arg.available_memory / (1024 * 1024), ' GB');
+          updateValue('buffers', arg.buffers / 1024, ' MB');
+          updateValue('cached', arg.cached / 1024, ' MB');
+          updateValue('free_memory', arg.free_memory / (1024 * 1024), ' GB');
+          updateValue('total_memory', arg.total_memory / (1024 * 1024), ' GB');
         });
 
         webTransport.ProcessJsonDataChanged.connect(function (arg) {
@@ -398,7 +350,8 @@
     });
 
     if (option && typeof option === 'object') {
-      myChart.setOption(option);
+      myChart1.setOption(option);
+      myChart2.setOption(option);
     }
 
     window.addEventListener('resize', myChart.resize);
