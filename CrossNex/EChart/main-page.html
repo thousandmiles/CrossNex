@@ -120,9 +120,15 @@
       /* 调整总高度根据需要 */
     }
 
+    .chart-description {
+      margin-top: 0px;
+      /* 调整文字说明与图表之间的间距 */
+      text-align: center;
+      /* 让文字说明居中 */
+    }
+
     .chart {
       flex: 1;
-
     }
   </style>
 </head>
@@ -174,7 +180,9 @@
       </div>
       <div class="chart-container">
         <div id="gauge_container_disk" class="chart"></div>
+        <!-- <div class="chart-description">Disk Space Utilization Rate</div> -->
         <div id="gauge_container_memory" class="chart"></div>
+        <!-- <div class="chart-description">Memory Space Utilization Rate</div> -->
       </div>
     </div>
     <div class="memory_trend_container">内存趋势变化</div>
@@ -210,7 +218,16 @@
       useDirtyRect: false
     });
 
-    option = {
+    option1 = {
+      title: {
+        text: 'Disk Space Utilization Rate',
+        // subtext: 'Additional Explanation if needed',
+        left: 'center',  // 居中
+        textStyle: {
+          color: '#333',  // 文字颜色
+          fontSize: 16  // 文字大小
+        }
+      },
       series: [
         {
           type: 'gauge',
@@ -254,7 +271,66 @@
             valueAnimation: true,
             formatter: '{value} %',
             color: 'inherit',
-            fontSize: 10
+            fontSize: 14
+          },
+        }
+      ]
+    };
+
+    option2 = {
+      title: {
+        text: 'Memory Space Utilization Rate',
+        // subtext: 'Additional Explanation if needed',
+        left: 'center',  // 居中
+        textStyle: {
+          color: '#333',  // 文字颜色
+          fontSize: 16  // 文字大小
+        }
+      },
+      series: [
+        {
+          type: 'gauge',
+          axisLine: {
+            lineStyle: {
+              width: 12,
+              color: [
+                [0.3, '#67e0e3'],
+                [0.7, '#37a2da'],
+                [1, '#fd666d']
+              ]
+            }
+          },
+          pointer: {
+            itemStyle: {
+              color: 'auto'
+            }
+          },
+          axisTick: {
+            distance: -6,
+            length: 6,
+            lineStyle: {
+              color: '#fff',
+              width: 2
+            }
+          },
+          splitLine: {
+            distance: -12,
+            length: 20,
+            lineStyle: {
+              color: '#fff',
+              width: 1
+            }
+          },
+          axisLabel: {
+            color: 'inherit',
+            distance: 18,
+            fontSize: 8
+          },
+          detail: {
+            valueAnimation: true,
+            formatter: '{value} %',
+            color: 'inherit',
+            fontSize: 14
           },
         }
       ]
@@ -308,7 +384,7 @@
               {
                 data: [
                   {
-                    value: arg  // 使用传递的值
+                    value: arg.toFixed(2)   // 使用传递的值
                   }
                 ]
               }
@@ -331,11 +407,24 @@
 
         // 连接到 Memory 数据更新信号
         webTransport.MemoryJsonDataChanged.connect(function (arg) {
-          updateValue('available_memory', arg.available_memory / (1024 * 1024), ' GB');
-          updateValue('buffers', arg.buffers / 1024, ' MB');
-          updateValue('cached', arg.cached / 1024, ' MB');
-          updateValue('free_memory', arg.free_memory / (1024 * 1024), ' GB');
-          updateValue('total_memory', arg.total_memory / (1024 * 1024), ' GB');
+          updateValue('available_memory', arg.available_memory, ' GB');
+          updateValue('buffers', arg.buffers, ' MB');
+          updateValue('cached', arg.cached, ' MB');
+          updateValue('free_memory', arg.free_memory, ' GB');
+          updateValue('total_memory', arg.total_memory, ' GB');
+          var newData = {
+            series: [
+              {
+                data: [
+                  {
+                    value: arg.used_percent.toFixed(2)  // 使用传递的值
+                  }
+                ]
+              }
+            ]
+          };
+          myChart2.setOption(newData);
+
         });
 
         webTransport.ProcessJsonDataChanged.connect(function (arg) {
@@ -349,9 +438,9 @@
       });
     });
 
-    if (option && typeof option === 'object') {
-      myChart1.setOption(option);
-      myChart2.setOption(option);
+    if (option1 && typeof option1 === 'object') {
+      myChart1.setOption(option1);
+      myChart2.setOption(option2);
     }
 
     window.addEventListener('resize', myChart.resize);

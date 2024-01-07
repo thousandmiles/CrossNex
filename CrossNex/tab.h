@@ -33,7 +33,7 @@ signals:
     void CPUJsonDataChanged(const QJsonObject &JsonData);
     void MemoryJsonDataChanged(const QJsonObject &JsonData);
     void DiskJsonDataChanged(const QJsonObject &JsonData);
-    void DiskUsedPercentIsObtained(const int& usedValue);
+    void DiskUsedPercentIsObtained(const double& usedValue);
     void ProcessJsonDataChanged(const QJsonObject &JsonData);
 
 private:

@@ -98,8 +98,6 @@ void Tab::updateProcessInfo(const QByteArray &data)
     if (!jsonDoc.isNull() && jsonDoc.isObject())
     {
         QJsonObject processJson = jsonDoc.object();
-
-        qDebug()<<"processJson: "<< processJson;
         webTransport->sendProcessDataToJavaScript(processJson);
     }
 }
@@ -138,13 +136,28 @@ void WebTransport::sendCPUDataToJavaScript(const QJsonObject &data) {
 
 void WebTransport::sendMemoryDataToJavaScript(const QJsonObject &data)
 {
-    setProperty("MemoryJsonData", data);
+    qint64 totalMemory = data["total_memory"].toInt();
+    qint64 freeMemory = data["free_memory"].toInt();
+    qint64 availableMemory = data["available_memory"].toInt();
+    qint64 buffers = data["buffers"].toInt();
+    qint64 cached = data["cached"].toInt();
+
+    QJsonObject newJsonObj;
+    newJsonObj["total_memory"] = double(totalMemory) / (1024 * 1024);
+    newJsonObj["free_memory"] = double(freeMemory) / (1024 * 1024);
+    newJsonObj["available_memory"] = double(availableMemory) / (1024 * 1024);
+    newJsonObj["buffers"] = double(buffers) / 1024;
+    newJsonObj["cached"] = double(cached) / 1024;
+    newJsonObj["used_percent"] = (double(totalMemory - availableMemory) / totalMemory) * 100;
+    qDebug()<<newJsonObj;
+    setProperty("MemoryJsonData", newJsonObj);
+
 }
 
 void WebTransport::sendDiskDataToJavaScript(const QJsonObject &data)
 {
     setProperty("DiskJsonData", data);
-    int used_percent = 0;
+    double used_percent = 0;
 
     if (data.contains("disk") && data["disk"].isArray())
     {
