@@ -34,12 +34,7 @@ public:
     QString ipAddress;
 
 public slots:
-    void addNode() {
-        if (getItemType() == FolderType) {
-            CustomTreeWidgetItem *newNode = new CustomTreeWidgetItem(this, NodeType);
-            newNode->setText(0, "新建节点");
-        }
-    }
+    void addNode();
 
     void myItemClicked(CustomTreeWidgetItem *item, int column);
 };
