@@ -14,7 +14,6 @@ public:
     NewInstanceDialog(QWidget *parent = nullptr);
 
     QString getIpAddress() const;
-
     QString getInstanceName() const;
 
     bool isValidIpAddress(const QString &ipAddress);
